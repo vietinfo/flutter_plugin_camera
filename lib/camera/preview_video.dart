@@ -60,6 +60,7 @@ class _PreviewVideoState extends State<PreviewVideo> {
           print('Luu thanh cong');
         });
       }
+      Get.back(result: 1);
 
     }else{
       widget.fileVideo(File(widget.videoPath));
@@ -68,6 +69,7 @@ class _PreviewVideoState extends State<PreviewVideo> {
           print('Luu thanh cong');
         });
       }
+      Get.back(result: 1);
     }
 
 

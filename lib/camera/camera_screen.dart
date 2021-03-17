@@ -1,6 +1,6 @@
 part of flutter_plugin_camera;
 /*
- * Custom lại hơi cùi, ae thông cảm nhé ^^!
+ * Custom lại cùi, ae thông cảm nhé ^^!
  * Source có sẳng trên mạng chỉ cần chỉnh lại theo yêu cầu.
  *
 */
@@ -16,6 +16,7 @@ class CameraScreen extends StatefulWidget {
   final bool saveMedia;
   // Kết quả trả về dạng file.
   final ValueChanged<File> onResutl;
+
 
   CameraScreen(
       {this.timeOutVideoCamera = 0,
@@ -51,6 +52,8 @@ class _CameraScreenState extends State<CameraScreen> {
   Timer _timer;
   int _pointers = 0;
   double scale = 1.0;
+  var result;
+
 
   List<String> text = <String>[
     'CHỤP ẢNH',
@@ -82,6 +85,7 @@ class _CameraScreenState extends State<CameraScreen> {
     }).catchError((err) {
       print('Error :${err.code}Error message : ${err.message}');
     });
+
   }
 
   Future _initCameraController(CameraDescription cameraDescription) async {
@@ -484,17 +488,22 @@ class _CameraScreenState extends State<CameraScreen> {
     }
   }
 
-  void onTakePictureButtonPressed(context) {
-    takePicture().then((XFile file) {
+  void onTakePictureButtonPressed(context)  {
+    takePicture().then((XFile file) async {
       if (mounted) {
         if (file != null) {
           print('Picture saved to ${file.path}');
-          Get.to(PreviewScreen(
+          result = await  Get.to(PreviewScreen(
             fileImage: widget.onResutl,
             imgPath: file.path,
             compress: widget.compressImage,
             saveMedia: widget.saveMedia,
           ));
+          if(result != null){
+            Get.back();
+          }
+
+
         }
       }
     });
@@ -622,16 +631,20 @@ class _CameraScreenState extends State<CameraScreen> {
   }
 
   void onStopButtonPressed() {
-    stopVideoRecording().then((file) {
+    stopVideoRecording().then((file) async {
       if (mounted) setState(() {});
       if (file != null) {
         videoFile = file;
-        Get.to(() => PreviewVideo(
+        result = await Get.to(() => PreviewVideo(
               fileVideo: widget.onResutl,
               videoPath: file.path,
               compress: widget.compressVideo,
               saveMedia: widget.saveMedia,
             ));
+        if(result != null){
+          Get.back();
+        }
+
       }
     });
     if (_timer != null) _timer.cancel();

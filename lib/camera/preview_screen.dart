@@ -18,6 +18,8 @@ class _PreviewScreenState extends State<PreviewScreen> {
   bool check = false;
   String albumName = 'Media';
 
+
+
   @override
   void initState() {
     // TODO: implement initState
@@ -121,6 +123,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
                             print('Luu thanh cong');
                           });
                         }
+                       Get.back(result: 1);
                       } else {
                         widget.fileImage(File(widget.imgPath));
                         if(widget.saveMedia == true){
@@ -129,6 +132,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
                             print('Luu thanh cong');
                           });
                         }
+                        Get.back(result: 1);
 
                       }
                     },
