@@ -6,7 +6,7 @@
 part of flutter_plugin_camera;
 class CameraScreen extends StatefulWidget {
 
-  // Set time quay video, mặc định time = 30p .
+  // Set time quay video theo giây, mặc định timeOutVideoCamera = 30 phút .
   final int timeOutVideoCamera;
 
   // Nén chất lượng video, mặt định compressVideo = false.
@@ -16,7 +16,6 @@ class CameraScreen extends StatefulWidget {
   final bool compressImage;
 
   // Lưu ảnh & video xuống máy, mặc định saveMedia = false sẽ không lưu.
-  // pub save đang lỗi nếu muốn dùng thì sdk = 29
   final bool saveMedia;
 
   // Kết quả trả về dạng file.
