@@ -117,21 +117,21 @@ class _PreviewScreenState extends State<PreviewScreen> {
                     onTap: () {
                       if (cropped != null) {
                         widget.fileImage(File(cropped.path));
-                        if(widget.saveMedia == true){
-                          GallerySaver.saveImage(cropped.path, albumName: albumName)
-                              .then((bool success) {
-                            print('Luu thanh cong');
-                          });
-                        }
+                        // if(widget.saveMedia == true){
+                        //   GallerySaver.saveImage(cropped.path, albumName: albumName)
+                        //       .then((bool success) {
+                        //     print('Luu thanh cong');
+                        //   });
+                        // }
                        Get.back(result: 1);
                       } else {
                         widget.fileImage(File(widget.imgPath));
-                        if(widget.saveMedia == true){
-                          GallerySaver.saveImage(widget.imgPath, albumName: albumName)
-                              .then((bool success) {
-                            print('Luu thanh cong');
-                          });
-                        }
+                        // if(widget.saveMedia == true){
+                        //   GallerySaver.saveImage(widget.imgPath, albumName: albumName)
+                        //       .then((bool success) {
+                        //     print('Luu thanh cong');
+                        //   });
+                        // }
                         Get.back(result: 1);
 
                       }

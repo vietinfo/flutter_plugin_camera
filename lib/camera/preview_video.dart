@@ -55,20 +55,20 @@ class _PreviewVideoState extends State<PreviewVideo> {
         includeAudio: true,
       );
       widget.fileVideo(File(info.path));
-      if(widget.saveMedia == true){
-        GallerySaver.saveVideo(info.path, albumName: albumName).then((bool success) {
-          print('Luu thanh cong');
-        });
-      }
+      // if(widget.saveMedia == true){
+      //   GallerySaver.saveVideo(info.path, albumName: albumName).then((bool success) {
+      //     print('Luu thanh cong');
+      //   });
+      // }
       Get.back(result: 1);
 
     }else{
       widget.fileVideo(File(widget.videoPath));
-      if(widget.saveMedia == true){
-        GallerySaver.saveVideo(widget.videoPath, albumName: albumName).then((bool success) {
-          print('Luu thanh cong');
-        });
-      }
+      // if(widget.saveMedia == true){
+      //   GallerySaver.saveVideo(widget.videoPath, albumName: albumName).then((bool success) {
+      //     print('Luu thanh cong');
+      //   });
+      // }
       Get.back(result: 1);
     }
 

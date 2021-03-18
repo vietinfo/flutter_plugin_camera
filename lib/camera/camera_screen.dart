@@ -1,36 +1,36 @@
 part of flutter_plugin_camera;
+
 /*
  * Custom lại cùi, ae thông cảm nhé ^^!
  * Source có sẳng trên mạng chỉ cần chỉnh lại theo yêu cầu.
  *
 */
 class CameraScreen extends StatefulWidget {
-
-  // Set time quay video, mặc định time = 0 video sẽ quay vô cực.
+  // Set time quay video, mặc định time = 30p .
   final int timeOutVideoCamera;
   // Nén chất lượng video, mặt định compressVideo = false.
   final bool compressVideo;
   // Nén chất lượng hình ảnh, mặt định compressImage = false.
   final bool compressImage;
   // Lưu ảnh & video xuống máy, mặc định saveMedia = false sẽ không lưu.
-  final bool saveMedia;
+  // pub save đang lỗi nếu muốn dùng thì sdk = 29
+  // final bool saveMedia;
   // Kết quả trả về dạng file.
   final ValueChanged<File> onResutl;
 
-
-  CameraScreen(
-      {this.timeOutVideoCamera = 0,
-      this.compressVideo = false,
-      this.compressImage = false,
-      this.onResutl,
-      this.saveMedia = false});
+  CameraScreen({
+    this.timeOutVideoCamera = 0,
+    this.compressVideo = false,
+    this.compressImage = false,
+    this.onResutl,
+    // this.saveMedia = false
+  });
 
   @override
   _CameraScreenState createState() => _CameraScreenState();
 }
 
 class _CameraScreenState extends State<CameraScreen> {
-
   List cameras;
   String timestamp() => DateTime.now().millisecondsSinceEpoch.toString();
   final BehaviorSubject<bool> visibilityController =
@@ -53,7 +53,7 @@ class _CameraScreenState extends State<CameraScreen> {
   int _pointers = 0;
   double scale = 1.0;
   var result;
-
+  Duration maximumRecordingDuration;
 
   List<String> text = <String>[
     'CHỤP ẢNH',
@@ -85,7 +85,11 @@ class _CameraScreenState extends State<CameraScreen> {
     }).catchError((err) {
       print('Error :${err.code}Error message : ${err.message}');
     });
-
+    if (widget.timeOutVideoCamera == 0) {
+      maximumRecordingDuration = Duration(minutes: 30);
+    } else {
+      maximumRecordingDuration = Duration(seconds: widget.timeOutVideoCamera);
+    }
   }
 
   Future _initCameraController(CameraDescription cameraDescription) async {
@@ -211,7 +215,6 @@ class _CameraScreenState extends State<CameraScreen> {
                             ? GestureDetector(
                                 behavior: HitTestBehavior.translucent,
                                 onTap: () {
-                                  //_onCapturePressed(context);
                                   onTakePictureButtonPressed(context);
                                 },
                                 child: Align(
@@ -249,7 +252,9 @@ class _CameraScreenState extends State<CameraScreen> {
                                       .add(StopWatchExecute.start);
                                   visibilityController.sink.add(true);
                                   if (widget.timeOutVideoCamera != 0) {
-                                    checkTime(context);
+                                    checkTime();
+                                  } else {
+                                    defaultTime();
                                   }
                                 },
                                 child: Align(
@@ -381,13 +386,6 @@ class _CameraScreenState extends State<CameraScreen> {
                       child: Padding(
                           padding: const EdgeInsets.fromLTRB(0, 0, 0, 45),
                           child: GestureDetector(
-                            behavior: HitTestBehavior.translucent,
-                            onTap: () {
-                              onStopButtonPressed();
-                              _stopWatchTimer.onExecute
-                                  .add(StopWatchExecute.reset);
-                              visibilityController.sink.add(false);
-                            },
                             child: Align(
                               alignment: Alignment.bottomCenter,
                               child: new Container(
@@ -416,6 +414,31 @@ class _CameraScreenState extends State<CameraScreen> {
                               ),
                             ),
                           )),
+                    )
+                  : SizedBox.shrink(),
+              // circular progress time
+              (snapshot.data != false)
+                  ? Positioned(
+                      bottom: 10.0,
+                      left: 0.0,
+                      right: 0.0,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 0, 0, 45),
+                        child: GestureDetector(
+                          behavior: HitTestBehavior.translucent,
+                          onTap: () {
+                            onStopButtonPressed();
+                            _stopWatchTimer.onExecute
+                                .add(StopWatchExecute.reset);
+                            visibilityController.sink.add(false);
+                          },
+                          child: CircleProgressBar(
+                            duration: maximumRecordingDuration,
+                            outerRadius: 35,
+                            ringsWidth: 2.0,
+                          ),
+                        ),
+                      ),
                     )
                   : SizedBox.shrink(),
             ],
@@ -488,22 +511,20 @@ class _CameraScreenState extends State<CameraScreen> {
     }
   }
 
-  void onTakePictureButtonPressed(context)  {
+  void onTakePictureButtonPressed(context) {
     takePicture().then((XFile file) async {
       if (mounted) {
         if (file != null) {
           print('Picture saved to ${file.path}');
-          result = await  Get.to(PreviewScreen(
+          result = await Get.to(PreviewScreen(
             fileImage: widget.onResutl,
             imgPath: file.path,
             compress: widget.compressImage,
-            saveMedia: widget.saveMedia,
+            // saveMedia: widget.saveMedia,
           ));
-          if(result != null){
+          if (result != null) {
             Get.back();
           }
-
-
         }
       }
     });
@@ -639,12 +660,11 @@ class _CameraScreenState extends State<CameraScreen> {
               fileVideo: widget.onResutl,
               videoPath: file.path,
               compress: widget.compressVideo,
-              saveMedia: widget.saveMedia,
+              // saveMedia: widget.saveMedia,
             ));
-        if(result != null){
+        if (result != null) {
           Get.back();
         }
-
       }
     });
     if (_timer != null) _timer.cancel();
@@ -665,9 +685,18 @@ class _CameraScreenState extends State<CameraScreen> {
     }
   }
 
-  void checkTime(context) {
+  void checkTime() {
     _timer = Timer.periodic(Duration(seconds: widget.timeOutVideoCamera + 1),
         (Timer t) {
+      _stopWatchTimer.onExecute.add(StopWatchExecute.reset);
+      visibilityController.sink.add(false);
+      onStopButtonPressed();
+      _timer.cancel();
+    });
+  }
+
+  void defaultTime() {
+    _timer = Timer.periodic(Duration(minutes: 30), (Timer t) {
       _stopWatchTimer.onExecute.add(StopWatchExecute.reset);
       visibilityController.sink.add(false);
       onStopButtonPressed();
