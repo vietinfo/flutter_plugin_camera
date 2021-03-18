@@ -35,6 +35,7 @@ class MyApp extends StatelessWidget {
       home: GestureDetector(
         onTap: (){
           Get.to(() => CameraScreen(
+            saveMedia: true,
             timeOutVideoCamera: 5,
             onResutl: (value){
               print(value);

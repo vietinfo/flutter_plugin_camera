@@ -1,11 +1,10 @@
 part of flutter_plugin_camera;
 
-
 class CircleProgressBar extends StatefulWidget {
   const CircleProgressBar({
-     key,
-     this.outerRadius,
-     this.ringsWidth,
+    key,
+    this.outerRadius,
+    this.ringsWidth,
     this.ringsColor = Colors.red,
     this.progress = 0.0,
     this.duration = const Duration(seconds: 15),
@@ -25,7 +24,7 @@ class CircleProgressState extends State<CircleProgressBar>
     with SingleTickerProviderStateMixin {
   final GlobalKey paintKey = GlobalKey();
 
-    AnimationController progressController ;
+  AnimationController progressController;
 
   @override
   void initState() {
@@ -67,9 +66,9 @@ class CircleProgressState extends State<CircleProgressBar>
 
 class ProgressPainter extends CustomPainter {
   const ProgressPainter({
-     this.ringsWidth,
-     this.ringsColor,
-     this.progress,
+    this.ringsWidth,
+    this.ringsColor,
+    this.progress,
   });
 
   final double ringsWidth;

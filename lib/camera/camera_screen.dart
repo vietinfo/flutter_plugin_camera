@@ -1,29 +1,38 @@
-part of flutter_plugin_camera;
-
 /*
  * Custom lại cùi, ae thông cảm nhé ^^!
  * Source có sẳng trên mạng chỉ cần chỉnh lại theo yêu cầu.
  *
 */
+part of flutter_plugin_camera;
 class CameraScreen extends StatefulWidget {
+
   // Set time quay video, mặc định time = 30p .
   final int timeOutVideoCamera;
+
   // Nén chất lượng video, mặt định compressVideo = false.
   final bool compressVideo;
+
   // Nén chất lượng hình ảnh, mặt định compressImage = false.
   final bool compressImage;
+
   // Lưu ảnh & video xuống máy, mặc định saveMedia = false sẽ không lưu.
   // pub save đang lỗi nếu muốn dùng thì sdk = 29
-  // final bool saveMedia;
+  final bool saveMedia;
+
   // Kết quả trả về dạng file.
+  // vd: onResutl: (value){print(value);},
   final ValueChanged<File> onResutl;
+
+  // Tắt quay video, nếu disableVideoRecord = true sẽ tắt chế độ quay video.
+  final disableVideoRecord;
 
   CameraScreen({
     this.timeOutVideoCamera = 0,
     this.compressVideo = false,
     this.compressImage = false,
     this.onResutl,
-    // this.saveMedia = false
+    this.saveMedia = false,
+    this.disableVideoRecord = false,
   });
 
   @override
@@ -62,7 +71,6 @@ class _CameraScreenState extends State<CameraScreen> {
 
   @override
   void dispose() async {
-    // TODO: implement dispose
     super.dispose();
     controller?.dispose();
     visibilityController.close();
@@ -85,6 +93,7 @@ class _CameraScreenState extends State<CameraScreen> {
     }).catchError((err) {
       print('Error :${err.code}Error message : ${err.message}');
     });
+
     if (widget.timeOutVideoCamera == 0) {
       maximumRecordingDuration = Duration(minutes: 30);
     } else {
@@ -309,7 +318,7 @@ class _CameraScreenState extends State<CameraScreen> {
                       bottom: 20.0,
                       left: 0,
                       right: 0,
-                      child: GestureDetector(
+                      child: (widget.disableVideoRecord != true)?GestureDetector(
                         onTap: () {
                           if (text[0] == 'CHỤP ẢNH') {
                             text.sort((a, b) => a.length.compareTo(b.length));
@@ -328,7 +337,7 @@ class _CameraScreenState extends State<CameraScreen> {
                             ),
                           ),
                         ),
-                      ),
+                      )  : SizedBox.shrink(),
                     )
                   : SizedBox.shrink(),
               // Time quay video
@@ -520,7 +529,7 @@ class _CameraScreenState extends State<CameraScreen> {
             fileImage: widget.onResutl,
             imgPath: file.path,
             compress: widget.compressImage,
-            // saveMedia: widget.saveMedia,
+            saveMedia: widget.saveMedia,
           ));
           if (result != null) {
             Get.back();
@@ -660,7 +669,7 @@ class _CameraScreenState extends State<CameraScreen> {
               fileVideo: widget.onResutl,
               videoPath: file.path,
               compress: widget.compressVideo,
-              // saveMedia: widget.saveMedia,
+              saveMedia: widget.saveMedia,
             ));
         if (result != null) {
           Get.back();

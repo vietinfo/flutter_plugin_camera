@@ -1,13 +1,16 @@
 part of flutter_plugin_camera;
 
-
 class PreviewVideo extends StatefulWidget {
   String videoPath;
   bool compress;
   final bool saveMedia;
   ValueChanged<File> fileVideo;
 
-  PreviewVideo({this.fileVideo,this.videoPath, this.compress = false, this.saveMedia = false});
+  PreviewVideo(
+      {this.fileVideo,
+      this.videoPath,
+      this.compress = false,
+      this.saveMedia = false});
   @override
   _PreviewVideoState createState() => _PreviewVideoState();
 }
@@ -24,7 +27,7 @@ class _PreviewVideoState extends State<PreviewVideo> {
     // TODO: implement initState
     super.initState();
     final VideoPlayerController vcontroller =
-    VideoPlayerController.file(File(widget.videoPath));
+        VideoPlayerController.file(File(widget.videoPath));
     videoPlayerListener = () {
       if (videoController != null && videoController.value.size != null) {
         // Refreshing the state to update video player with the correct ratio.
@@ -42,12 +45,10 @@ class _PreviewVideoState extends State<PreviewVideo> {
       });
     }
     vcontroller.play();
-
   }
 
-  Future video() async{
-
-    if(widget.compress == true){
+  Future video() async {
+    if (widget.compress == true) {
       final info = await VideoCompress.compressVideo(
         widget.videoPath,
         quality: VideoQuality.LowQuality,
@@ -55,24 +56,21 @@ class _PreviewVideoState extends State<PreviewVideo> {
         includeAudio: true,
       );
       widget.fileVideo(File(info.path));
-      // if(widget.saveMedia == true){
-      //   GallerySaver.saveVideo(info.path, albumName: albumName).then((bool success) {
-      //     print('Luu thanh cong');
-      //   });
-      // }
+      if(widget.saveMedia == true){
+        GallerySaver.saveVideo(info.path, albumName: albumName).then((bool success) {
+          print('Luu thanh cong');
+        });
+      }
       Get.back(result: 1);
-
-    }else{
+    } else {
       widget.fileVideo(File(widget.videoPath));
-      // if(widget.saveMedia == true){
-      //   GallerySaver.saveVideo(widget.videoPath, albumName: albumName).then((bool success) {
-      //     print('Luu thanh cong');
-      //   });
-      // }
+      if(widget.saveMedia == true){
+        GallerySaver.saveVideo(widget.videoPath, albumName: albumName).then((bool success) {
+          print('Luu thanh cong');
+        });
+      }
       Get.back(result: 1);
     }
-
-
   }
 
   @override
@@ -84,84 +82,82 @@ class _PreviewVideoState extends State<PreviewVideo> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Container(
-        color: Colors.black,
-        child: Stack(
-          children: [
-            Positioned.fill(
-              child: VideoPlayer(videoController),
-            ),
-            Positioned(
-              top: 0,
-              child: Container(
-                height: 50,
-                width: MediaQuery.of(context).size.width,
-                color: Colors.black12.withOpacity(0.5),
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 10,
-                    ),
-                    GestureDetector(
-                        onTap: () {
-                          videoController.pause();
-                          Get.back();
-                        },
+    return Container(
+      color: Colors.black,
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: VideoPlayer(videoController),
+          ),
+          Positioned(
+            top: 0,
+            child: Container(
+              height: 80,
+              width: MediaQuery.of(context).size.width,
+              color: Colors.black12.withOpacity(0.5),
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 10,
+                  ),
+                  GestureDetector(
+                      onTap: () {
+                        videoController.pause();
+                        Get.back();
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 30),
                         child: Icon(
                           Icons.clear,
                           color: Colors.white,
-                        )),
-                    Spacer(),
-                    SizedBox(
-                      width: 15,
+                        ),
+                      )),
+                  Spacer(),
+                  SizedBox(
+                    width: 15,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 0,
+            child: Container(
+              height: 50,
+              width: MediaQuery.of(context).size.width,
+              color: Colors.black12.withOpacity(0.5),
+              child: Row(
+                children: [],
+              ),
+            ),
+          ),
+          Positioned(
+              bottom: 25,
+              right: 15,
+              child: GestureDetector(
+                onTap: () {
+                  video();
+                },
+                child: Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.all(Radius.circular(
+                        50.0) //                 <--- border radius here
                     ),
-                  ],
-                ),
-              ),
-            ),
-            Positioned(
-              bottom: 0,
-              child: Container(
-                height: 50,
-                width: MediaQuery.of(context).size.width,
-                color: Colors.black12.withOpacity(0.5),
-                child: Row(
-                  children: [
-                  ],
-                ),
-              ),
-            ),
-            Positioned(
-                bottom: 25,
-                right: 15,
-                child: GestureDetector(
-                  onTap: (){
-                    video();
-                  },
-                  child: Container(
-                    width: 60,
-                    height: 60,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(
-                          50.0) //                 <--- border radius here
-                      ),
-                    ), //             <--- BoxDecoration here
-                    child: Center(
-                      child: Icon(
-                        Icons.send_sharp,
-                        color: Colors.blue,
-                        size: 35,
-                      ),
+                  ), //             <--- BoxDecoration here
+                  child: Center(
+                    child: Icon(
+                      Icons.send_sharp,
+                      color: Colors.blue,
+                      size: 35,
                     ),
                   ),
-                ))
-          ],
-        ),
+                ),
+              ))
+        ],
       ),
     );
   }
-
-
 }
