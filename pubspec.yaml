@@ -13,7 +13,7 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.2
   camera: ^0.8.0
-  video_player: ^0.10.0
+  video_player: ^2.0.2
   image_cropper: ^1.4.0
   get: ^3.26.0
   rxdart: ^0.26.0
