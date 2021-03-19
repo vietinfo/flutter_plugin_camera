@@ -38,11 +38,12 @@ class _PreviewScreenState extends State<PreviewScreen> {
         child: Stack(
           children: <Widget>[
             (cropped == null)
-                ? Positioned.fill(
-                child: Image.file(
-                  File(widget.imgPath),
-                  fit: BoxFit.cover,
-                ))
+                ? Center(
+                  child: Image.file(
+                    File(widget.imgPath),
+                    fit: BoxFit.cover,
+                  ),
+                )
                 : Positioned(
               top: 150,
               bottom: 150,
@@ -96,6 +97,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
             ),
             Positioned(
               bottom: 0,
+
               child: Container(
                 height: 50,
                 width: MediaQuery.of(context).size.width,
@@ -105,16 +107,16 @@ class _PreviewScreenState extends State<PreviewScreen> {
                     SizedBox(
                       width: 10,
                     ),
-                    GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            check = !check;
-                          });
-                        },
-                        child: Icon(
-                          Icons.filter,
-                          color: Colors.white,
-                        )),
+                    // GestureDetector(
+                    //     onTap: () {
+                    //       setState(() {
+                    //         check = !check;
+                    //       });
+                    //     },
+                    //     child: Icon(
+                    //       Icons.filter,
+                    //       color: Colors.white,
+                    //     )),
                   ],
                 ),
               ),

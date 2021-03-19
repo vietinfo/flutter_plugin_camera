@@ -21,6 +21,9 @@ class _PreviewVideoState extends State<PreviewVideo> {
   VoidCallback videoPlayerListener;
   bool startedPlaying = false;
   String albumName = 'Media';
+  final BehaviorSubject<bool> _visibilityCompress =
+  BehaviorSubject<bool>.seeded(false);
+
 
   @override
   void initState() {
@@ -48,14 +51,29 @@ class _PreviewVideoState extends State<PreviewVideo> {
   }
 
   Future video() async {
+
     if (widget.compress == true) {
+      _visibilityCompress.sink.add(true);
       final info = await VideoCompress.compressVideo(
         widget.videoPath,
         quality: VideoQuality.LowQuality,
         deleteOrigin: false,
         includeAudio: true,
       );
-      widget.fileVideo(File(info.path));
+
+
+      final FlutterFFmpeg _flutterFFmpeg = FlutterFFmpeg();
+
+      final Directory tempDir = await getTemporaryDirectory();
+      final String videoOutput =
+          tempDir.path + '/' + path.basenameWithoutExtension(widget.videoPath) + '.mp4';
+      var arguments = ["-i",info.path, "-c:v", "mpeg4", videoOutput];
+      final _compress = _flutterFFmpeg.executeWithArguments(arguments);
+
+      if(_compress != null){
+        widget.fileVideo(File(videoOutput));
+        _visibilityCompress.sink.add(false);
+      }
       if(widget.saveMedia == true){
         GallerySaver.saveVideo(info.path, albumName: albumName).then((bool success) {
           print('Luu thanh cong');
@@ -78,85 +96,103 @@ class _PreviewVideoState extends State<PreviewVideo> {
     // TODO: implement dispose
     super.dispose();
     videoController.dispose();
+    _visibilityCompress.close();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.black,
-      child: Stack(
-        children: [
-          Positioned.fill(
-            child: VideoPlayer(videoController),
-          ),
-          Positioned(
-            top: 0,
-            child: Container(
-              height: 80,
-              width: MediaQuery.of(context).size.width,
-              color: Colors.black12.withOpacity(0.5),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 10,
-                  ),
-                  GestureDetector(
-                      onTap: () {
-                        videoController.pause();
-                        Get.back();
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 30),
-                        child: Icon(
-                          Icons.clear,
-                          color: Colors.white,
+    return Scaffold(
+      body: Container(
+        color: Colors.black,
+        child: StreamBuilder(
+          stream: _visibilityCompress.stream,
+            initialData: false,
+          builder: (context, snapshot) {
+            return Stack(
+              alignment: Alignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 100, bottom: 100),
+                  child: VideoPlayer(videoController),
+                ),
+                Positioned(
+                  top: 0,
+                  child: Container(
+                    height: 80,
+                    width: MediaQuery.of(context).size.width,
+                    color: Colors.black12.withOpacity(0.5),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 10,
                         ),
-                      )),
-                  Spacer(),
-                  SizedBox(
-                    width: 15,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: 0,
-            child: Container(
-              height: 50,
-              width: MediaQuery.of(context).size.width,
-              color: Colors.black12.withOpacity(0.5),
-              child: Row(
-                children: [],
-              ),
-            ),
-          ),
-          Positioned(
-              bottom: 25,
-              right: 15,
-              child: GestureDetector(
-                onTap: () {
-                  video();
-                },
-                child: Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(
-                        50.0) //                 <--- border radius here
-                    ),
-                  ), //             <--- BoxDecoration here
-                  child: Center(
-                    child: Icon(
-                      Icons.send_sharp,
-                      color: Colors.blue,
-                      size: 35,
+                        GestureDetector(
+                            onTap: () {
+                              videoController.pause();
+                              Get.back();
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 30),
+                              child: Icon(
+                                Icons.clear,
+                                color: Colors.white,
+                              ),
+                            )),
+                        Spacer(),
+                        SizedBox(
+                          width: 15,
+                        ),
+                      ],
                     ),
                   ),
                 ),
-              ))
-        ],
+                Positioned(
+                  bottom: 0,
+                  child: Container(
+                    height: 50,
+                    width: MediaQuery.of(context).size.width,
+                    color: Colors.black12.withOpacity(0.5),
+                    child: Row(
+                      children: [],
+                    ),
+                  ),
+                ),
+                Positioned(
+                    bottom: 25,
+                    right: 15,
+                    child: GestureDetector(
+                      onTap: () {
+                        video();
+                      },
+                      child: (!snapshot.data)?Container(
+                        width: 60,
+                        height: 60,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(Radius.circular(
+                              50.0) //                 <--- border radius here
+                          ),
+                        ), //             <--- BoxDecoration here
+                        child: Center(
+                          child: Icon(
+                            Icons.send_sharp,
+                            color: Colors.blue,
+                            size: 35,
+                          ),
+                        ),
+                      ):SizedBox.shrink(),
+                    )),
+                Positioned.fill(
+                  child: Center(
+                    child: (snapshot.data)
+                        ? const CircularProgressIndicator()
+                        : Container(),
+                  ),
+                ),
+              ],
+            );
+          }
+        ),
       ),
     );
   }

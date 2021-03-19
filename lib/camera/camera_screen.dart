@@ -157,301 +157,300 @@ class _CameraScreenState extends State<CameraScreen> {
       );
     }
 
-    return StreamBuilder(
-        stream: visibilityController.stream,
-        builder: (context, AsyncSnapshot<bool> snapshot) {
-          return Stack(
-            children: [
-              Positioned.fill(
-                child: Listener(
+    return Container(
+      color: Colors.black,
+      child: StreamBuilder(
+          stream: visibilityController.stream,
+          builder: (context, AsyncSnapshot<bool> snapshot) {
+            return Stack(
+              alignment: Alignment.center,
+              children: [
+                Listener(
                   onPointerDown: (_) => _pointers++,
                   onPointerUp: (_) => _pointers--,
-                  child: AspectRatio(
-                    aspectRatio: controller.value.aspectRatio,
-                    child: CameraPreview(
-                      controller,
-                      child: LayoutBuilder(builder:
-                          (BuildContext context, BoxConstraints constraints) {
-                        return GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          onScaleStart: _handleScaleStart,
-                          onScaleUpdate: _handleScaleUpdate,
-                          onTapDown: (details) =>
-                              onViewFinderTap(details, constraints),
-                        );
-                      }),
-                    ),
+                  child: CameraPreview(
+                    controller,
+                    child: LayoutBuilder(builder:
+                        (BuildContext context, BoxConstraints constraints) {
+                      return GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onScaleStart: _handleScaleStart,
+                        onScaleUpdate: _handleScaleUpdate,
+                        onTapDown: (details) =>
+                            onViewFinderTap(details, constraints),
+                      );
+                    }),
                   ),
                 ),
-              ),
-              // Nut back
-              (snapshot.data == false)
-                  ? Positioned(
-                      top: 40,
-                      left: 15,
-                      child: GestureDetector(
-                          onTap: () {
-                            Get.back();
-                          },
-                          child: Icon(
-                            Icons.arrow_back_ios_outlined,
-                            color: Colors.white,
-                            size: 30,
-                          )))
-                  : SizedBox.shrink(),
-              // Nut den flash
-              (snapshot.data == false && (text[0] == 'CHỤP ẢNH'))
-                  ? Positioned(top: 35, right: 80, child: _flashButton())
-                  : SizedBox.shrink(),
-              // Nut chuyen camera
-              (snapshot.data == false)
-                  ? Positioned(
-                      top: 40,
-                      right: 20,
-                      child: _cameraTogglesRowWidget(),
-                    )
-                  : SizedBox.shrink(),
-              // Nut chup va quay video
-              (snapshot.data == false)
-                  ? Positioned(
-                      bottom: 10.0,
-                      left: 0.0,
-                      right: 0.0,
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 0, 0, 45),
-                        child: (text[0] == 'CHỤP ẢNH')
-                            ? GestureDetector(
-                                behavior: HitTestBehavior.translucent,
-                                onTap: () {
-                                  onTakePictureButtonPressed(context);
-                                },
-                                child: Align(
-                                  alignment: Alignment.bottomCenter,
-                                  child: new Container(
-                                    width: 70.0,
-                                    height: 70.0,
-                                    decoration: new BoxDecoration(
-                                      borderRadius: new BorderRadius.all(
-                                          new Radius.circular(50.0)),
-                                      border: new Border.all(
-                                        color: Colors.white,
-                                        width: 3.0,
-                                      ),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(5.0),
-                                      child: Container(
-                                        width: 30.0,
-                                        height: 30.0,
-                                        decoration: new BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: new BorderRadius.all(
-                                              new Radius.circular(50.0)),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              )
-                            : GestureDetector(
-                                onTap: () {
-                                  onVideoRecordButtonPressed();
-                                  _stopWatchTimer.onExecute
-                                      .add(StopWatchExecute.start);
-                                  visibilityController.sink.add(true);
-                                  if (widget.timeOutVideoCamera != 0) {
-                                    checkTime();
-                                  } else {
-                                    defaultTime();
-                                  }
-                                },
-                                child: Align(
-                                  alignment: Alignment.bottomCenter,
-                                  child: new Container(
-                                    width: 70.0,
-                                    height: 70.0,
-                                    decoration: new BoxDecoration(
-                                      borderRadius: new BorderRadius.all(
-                                          new Radius.circular(50.0)),
-                                      border: new Border.all(
-                                        color: Colors.white,
-                                        width: 3.0,
-                                      ),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(5.0),
-                                      child: Container(
-                                        width: 30.0,
-                                        height: 30.0,
-                                        decoration: new BoxDecoration(
-                                          color: Colors.red,
-                                          borderRadius: new BorderRadius.all(
-                                              new Radius.circular(50.0)),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                      ),
-                    )
-                  : SizedBox.shrink(),
-              // Nut chuyen camera, video
-              (snapshot.data == false)
-                  ? Positioned(
-                      bottom: 20.0,
-                      left: 0,
-                      right: 0,
-                      child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Text(
-                          text[0],
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    )
-                  : SizedBox.shrink(),
-              // Nut chuyen camera, video
-              (snapshot.data == false)
-                  ? Positioned(
-                      bottom: 20.0,
-                      left: 0,
-                      right: 0,
-                      child: (widget.disableVideoRecord != true)?GestureDetector(
-                        onTap: () {
-                          if (text[0] == 'CHỤP ẢNH') {
-                            text.sort((a, b) => a.length.compareTo(b.length));
-                          } else {
-                            text.sort((a, b) => b.length.compareTo(a.length));
-                          }
-                          setState(() {});
-                        },
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          child: Padding(
-                            padding: const EdgeInsets.only(right: 80),
-                            child: Text(
-                              text[1],
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ),
-                      )  : SizedBox.shrink(),
-                    )
-                  : SizedBox.shrink(),
-              // Time quay video
-              Positioned(
-                right: 15,
-                top: 40,
-                left: 15,
-                child: (text[0] != 'CHỤP ẢNH')
-                    ? Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          StreamBuilder<int>(
-                            stream: _stopWatchTimer.rawTime,
-                            initialData:
-                                _stopWatchTimer.rawTime.valueWrapper?.value,
-                            builder: (context, snap) {
-                              final value = snap.data;
-                              final displayTime = StopWatchTimer.getDisplayTime(
-                                  value,
-                                  milliSecond: false);
-                              return Column(
-                                children: <Widget>[
-                                  Padding(
-                                    padding: const EdgeInsets.all(8),
-                                    child: Text(
-                                      displayTime,
-                                      style: const TextStyle(
-                                        color: Colors.red,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              );
+                // Nut back
+                (snapshot.data == false)
+                    ? Positioned(
+                        top: 45,
+                        left: 15,
+                        child: GestureDetector(
+                            onTap: () {
+                              Get.back();
                             },
-                          ),
-                          (widget.timeOutVideoCamera != 0)
-                              ? Text('/ ', style: TextStyle(color: Colors.red))
-                              : SizedBox.shrink(),
-                          (widget.timeOutVideoCamera != 0)
-                              ? Text(
-                                  ' 00:00:${widget.timeOutVideoCamera.toString().padLeft(2, '0')}',
-                                  style: TextStyle(color: Colors.red),
-                                )
-                              : SizedBox.shrink()
-                        ],
+                            child: Icon(
+                              Icons.arrow_back_ios_outlined,
+                              color: Colors.white,
+                              size: 30,
+                            )))
+                    : SizedBox.shrink(),
+                // Nut den flash
+                (snapshot.data == false && (text[0] == 'CHỤP ẢNH'))
+                    ? Positioned(top: 35, right: 80, child: _flashButton())
+                    : SizedBox.shrink(),
+                // Nut chuyen camera
+                (snapshot.data == false)
+                    ? Positioned(
+                        top: 42,
+                        right: 20,
+                        child: _cameraTogglesRowWidget(),
                       )
                     : SizedBox.shrink(),
-              ),
-              // Nut dung quay video
-              (snapshot.data != false)
-                  ? Positioned(
-                      bottom: 10.0,
-                      left: 0.0,
-                      right: 0.0,
-                      child: Padding(
+                // Nut chup va quay video
+                (snapshot.data == false)
+                    ? Positioned(
+                        bottom: 10.0,
+                        left: 0.0,
+                        right: 0.0,
+                        child: Padding(
                           padding: const EdgeInsets.fromLTRB(0, 0, 0, 45),
-                          child: GestureDetector(
-                            child: Align(
-                              alignment: Alignment.bottomCenter,
-                              child: new Container(
-                                width: 70.0,
-                                height: 70.0,
-                                decoration: new BoxDecoration(
-                                  borderRadius: new BorderRadius.all(
-                                      new Radius.circular(50.0)),
-                                  border: new Border.all(
-                                    color: Colors.white,
-                                    width: 3.0,
+                          child: (text[0] == 'CHỤP ẢNH')
+                              ? GestureDetector(
+                                  behavior: HitTestBehavior.translucent,
+                                  onTap: () {
+                                    onTakePictureButtonPressed(context);
+                                  },
+                                  child: Align(
+                                    alignment: Alignment.bottomCenter,
+                                    child: new Container(
+                                      width: 70.0,
+                                      height: 70.0,
+                                      decoration: new BoxDecoration(
+                                        borderRadius: new BorderRadius.all(
+                                            new Radius.circular(50.0)),
+                                        border: new Border.all(
+                                          color: Colors.white,
+                                          width: 3.0,
+                                        ),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(5.0),
+                                        child: Container(
+                                          width: 30.0,
+                                          height: 30.0,
+                                          decoration: new BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: new BorderRadius.all(
+                                                new Radius.circular(50.0)),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : GestureDetector(
+                                  onTap: () {
+                                    onVideoRecordButtonPressed();
+                                    _stopWatchTimer.onExecute
+                                        .add(StopWatchExecute.start);
+                                    visibilityController.sink.add(true);
+                                    if (widget.timeOutVideoCamera != 0) {
+                                      checkTime();
+                                    } else {
+                                      defaultTime();
+                                    }
+                                  },
+                                  child: Align(
+                                    alignment: Alignment.bottomCenter,
+                                    child: new Container(
+                                      width: 70.0,
+                                      height: 70.0,
+                                      decoration: new BoxDecoration(
+                                        borderRadius: new BorderRadius.all(
+                                            new Radius.circular(50.0)),
+                                        border: new Border.all(
+                                          color: Colors.white,
+                                          width: 3.0,
+                                        ),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(5.0),
+                                        child: Container(
+                                          width: 30.0,
+                                          height: 30.0,
+                                          decoration: new BoxDecoration(
+                                            color: Colors.red,
+                                            borderRadius: new BorderRadius.all(
+                                                new Radius.circular(50.0)),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(15.0),
-                                  child: Container(
-                                    width: 10.0,
-                                    height: 10.0,
-                                    decoration: new BoxDecoration(
-                                      color: Colors.red,
-                                      borderRadius: new BorderRadius.all(
-                                          new Radius.circular(2.0)),
+                        ),
+                      )
+                    : SizedBox.shrink(),
+                // Nut chuyen camera, video
+                (snapshot.data == false)
+                    ? Positioned(
+                        bottom: 20.0,
+                        left: 0,
+                        right: 0,
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Text(
+                            text[0],
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      )
+                    : SizedBox.shrink(),
+                // Nut chuyen camera, video
+                (snapshot.data == false)
+                    ? Positioned(
+                        bottom: 20.0,
+                        left: 0,
+                        right: 0,
+                        child: (widget.disableVideoRecord != true)?GestureDetector(
+                          onTap: () {
+                            if (text[0] == 'CHỤP ẢNH') {
+                              text.sort((a, b) => a.length.compareTo(b.length));
+                            } else {
+                              text.sort((a, b) => b.length.compareTo(a.length));
+                            }
+                            setState(() {});
+                          },
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: Padding(
+                              padding: const EdgeInsets.only(right: 80),
+                              child: Text(
+                                text[1],
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        )  : SizedBox.shrink(),
+                      )
+                    : SizedBox.shrink(),
+                // Time quay video
+                Positioned(
+                  right: 15,
+                  top: 40,
+                  left: 15,
+                  child: (text[0] != 'CHỤP ẢNH')
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            StreamBuilder<int>(
+                              stream: _stopWatchTimer.rawTime,
+                              initialData:
+                                  _stopWatchTimer.rawTime.valueWrapper?.value,
+                              builder: (context, snap) {
+                                final value = snap.data;
+                                final displayTime = StopWatchTimer.getDisplayTime(
+                                    value,
+                                    milliSecond: false);
+                                return Column(
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: const EdgeInsets.all(8),
+                                      child: Text(
+                                        displayTime,
+                                        style: const TextStyle(
+                                          color: Colors.red,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
+                            (widget.timeOutVideoCamera != 0)
+                                ? Text('/ ', style: TextStyle(color: Colors.red))
+                                : SizedBox.shrink(),
+                            (widget.timeOutVideoCamera != 0)
+                                ? Text(
+                                    ' 00:00:${widget.timeOutVideoCamera.toString().padLeft(2, '0')}',
+                                    style: TextStyle(color: Colors.red),
+                                  )
+                                : SizedBox.shrink()
+                          ],
+                        )
+                      : SizedBox.shrink(),
+                ),
+                // Nut dung quay video
+                (snapshot.data != false)
+                    ? Positioned(
+                        bottom: 10.0,
+                        left: 0.0,
+                        right: 0.0,
+                        child: Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 45),
+                            child: GestureDetector(
+                              child: Align(
+                                alignment: Alignment.bottomCenter,
+                                child: new Container(
+                                  width: 70.0,
+                                  height: 70.0,
+                                  decoration: new BoxDecoration(
+                                    borderRadius: new BorderRadius.all(
+                                        new Radius.circular(50.0)),
+                                    border: new Border.all(
+                                      color: Colors.white,
+                                      width: 3.0,
+                                    ),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(15.0),
+                                    child: Container(
+                                      width: 10.0,
+                                      height: 10.0,
+                                      decoration: new BoxDecoration(
+                                        color: Colors.red,
+                                        borderRadius: new BorderRadius.all(
+                                            new Radius.circular(2.0)),
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
+                            )),
+                      )
+                    : SizedBox.shrink(),
+                // circular progress time
+                (snapshot.data != false)
+                    ? Positioned(
+                        bottom: 10.0,
+                        left: 0.0,
+                        right: 0.0,
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 45),
+                          child: GestureDetector(
+                            behavior: HitTestBehavior.translucent,
+                            onTap: () {
+                              onStopButtonPressed();
+                              _stopWatchTimer.onExecute
+                                  .add(StopWatchExecute.reset);
+                              visibilityController.sink.add(false);
+                            },
+                            child: CircleProgressBar(
+                              duration: maximumRecordingDuration,
+                              outerRadius: 35,
+                              ringsWidth: 2.0,
                             ),
-                          )),
-                    )
-                  : SizedBox.shrink(),
-              // circular progress time
-              (snapshot.data != false)
-                  ? Positioned(
-                      bottom: 10.0,
-                      left: 0.0,
-                      right: 0.0,
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 0, 0, 45),
-                        child: GestureDetector(
-                          behavior: HitTestBehavior.translucent,
-                          onTap: () {
-                            onStopButtonPressed();
-                            _stopWatchTimer.onExecute
-                                .add(StopWatchExecute.reset);
-                            visibilityController.sink.add(false);
-                          },
-                          child: CircleProgressBar(
-                            duration: maximumRecordingDuration,
-                            outerRadius: 35,
-                            ringsWidth: 2.0,
                           ),
                         ),
-                      ),
-                    )
-                  : SizedBox.shrink(),
-            ],
-          );
-        });
+                      )
+                    : SizedBox.shrink(),
+              ],
+            );
+          }),
+    );
   }
 
   Widget _cameraTogglesRowWidget() {

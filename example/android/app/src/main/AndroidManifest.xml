@@ -2,6 +2,8 @@
     package="com.example.flutter_plugin_camera_example">
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" />
    <application
         android:label="flutter_plugin_camera_example"
         android:icon="@mipmap/ic_launcher">

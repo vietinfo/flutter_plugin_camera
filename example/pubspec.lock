@@ -28,7 +28,7 @@ packages:
       name: camera_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.1"
+    version: "2.0.0"
   characters:
     dependency: transitive
     description:
@@ -97,6 +97,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_ffmpeg:
+    dependency: transitive
+    description:
+      name: flutter_ffmpeg
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.4.0"
   flutter_image_compress:
     dependency: transitive
     description:
@@ -213,7 +220,7 @@ packages:
       name: path_provider_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.1"
+    version: "2.0.0"
   path_provider_windows:
     dependency: transitive
     description:
@@ -241,7 +248,7 @@ packages:
       name: plugin_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.0"
+    version: "1.0.3"
   process:
     dependency: transitive
     description:
