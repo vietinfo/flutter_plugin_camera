@@ -25,7 +25,7 @@ class CameraScreen extends StatefulWidget {
   // Tắt quay video, nếu disableVideoRecord = true sẽ tắt chế độ quay video.
   final disableVideoRecord;
 
-  // Chỉnh cam mặc định 0: cam trước, 1: cam sau
+  // Chỉnh cam mặc định 0: cam sau, 1: cam trước
   final int speciesCamera;
 
   CameraScreen({
