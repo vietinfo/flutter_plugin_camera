@@ -25,6 +25,9 @@ class CameraScreen extends StatefulWidget {
   // Tắt quay video, nếu disableVideoRecord = true sẽ tắt chế độ quay video.
   final disableVideoRecord;
 
+  // Chỉnh cam mặc định 0: cam trước, 1: cam sau
+  final int speciesCamera;
+
   CameraScreen({
     this.timeOutVideoCamera = 0,
     this.compressVideo = false,
@@ -32,6 +35,7 @@ class CameraScreen extends StatefulWidget {
     this.onResutl,
     this.saveMedia = false,
     this.disableVideoRecord = false,
+    this.speciesCamera = 0,
   });
 
   @override
@@ -83,7 +87,7 @@ class _CameraScreenState extends State<CameraScreen> {
       cameras = availableCameras;
       if (cameras.length > 0) {
         setState(() {
-          selectedCameraIndex = 0;
+          selectedCameraIndex = widget.speciesCamera;
         });
         _initCameraController(cameras[selectedCameraIndex]).then((void v) {});
       } else {
@@ -185,7 +189,7 @@ class _CameraScreenState extends State<CameraScreen> {
                 // Nut back
                 (snapshot.data == false)
                     ? Positioned(
-                        top: 45,
+                        top: 48,
                         left: 15,
                         child: GestureDetector(
                             onTap: () {
@@ -199,12 +203,12 @@ class _CameraScreenState extends State<CameraScreen> {
                     : SizedBox.shrink(),
                 // Nut den flash
                 (snapshot.data == false && (text[0] == 'CHỤP ẢNH'))
-                    ? Positioned(top: 35, right: 80, child: _flashButton())
+                    ? Positioned(top: 38, right: 80, child: _flashButton())
                     : SizedBox.shrink(),
                 // Nut chuyen camera
                 (snapshot.data == false)
                     ? Positioned(
-                        top: 42,
+                        top: 43,
                         right: 20,
                         child: _cameraTogglesRowWidget(),
                       )

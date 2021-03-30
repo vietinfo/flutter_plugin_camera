@@ -75,7 +75,7 @@ class _PreviewVideoState extends State<PreviewVideo> {
         _visibilityCompress.sink.add(false);
       }
       if(widget.saveMedia == true){
-        GallerySaver.saveVideo(info.path, albumName: albumName).then((bool success) {
+        GallerySaver.saveVideo(videoOutput, albumName: albumName).then((bool success) {
           print('Luu thanh cong');
         });
       }
