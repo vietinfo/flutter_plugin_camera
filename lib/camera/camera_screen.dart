@@ -189,7 +189,7 @@ class _CameraScreenState extends State<CameraScreen> {
                 // Nut back
                 (snapshot.data == false)
                     ? Positioned(
-                        top: 48,
+                        top: 55,
                         left: 15,
                         child: GestureDetector(
                             onTap: () {
@@ -203,12 +203,12 @@ class _CameraScreenState extends State<CameraScreen> {
                     : SizedBox.shrink(),
                 // Nut den flash
                 (snapshot.data == false && (text[0] == 'CHỤP ẢNH'))
-                    ? Positioned(top: 38, right: 80, child: _flashButton())
+                    ? Positioned(top: 42, right: 80, child: _flashButton())
                     : SizedBox.shrink(),
                 // Nut chuyen camera
                 (snapshot.data == false)
                     ? Positioned(
-                        top: 43,
+                        top: 50,
                         right: 20,
                         child: _cameraTogglesRowWidget(),
                       )
@@ -344,7 +344,7 @@ class _CameraScreenState extends State<CameraScreen> {
                 // Time quay video
                 Positioned(
                   right: 15,
-                  top: 40,
+                  top: 50,
                   left: 15,
                   child: (text[0] != 'CHỤP ẢNH')
                       ? Row(

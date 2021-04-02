@@ -39,7 +39,6 @@ class MyApp extends StatelessWidget {
             compressVideo: true,
             compressImage: true,
             speciesCamera: 1,
-            timeOutVideoCamera: 5,
             onResutl: (value){
               print(value);
             },
