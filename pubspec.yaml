@@ -19,7 +19,7 @@ dependencies:
   rxdart: ^0.26.0
   stop_watch_timer: ^1.0.0
   flutter_image_compress: ^0.7.0
-  video_compress: ^2.1.0
+  video_compress: ^3.0.0
   flutter_ffmpeg: ^0.4.0
   path_provider: ^2.0.1
   gallery_saver:
