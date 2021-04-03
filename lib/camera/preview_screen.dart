@@ -39,10 +39,14 @@ class _PreviewScreenState extends State<PreviewScreen> {
           children: <Widget>[
             (cropped == null)
                 ? Center(
-                  child: Image.file(
-                    File(widget.imgPath),
-                    fit: BoxFit.cover,
-                  ),
+                  child: PhotoView(
+                    enableRotation: true,
+                    imageProvider: FileImage(File(widget.imgPath)),
+                  )
+                  // Image.file(
+                  //   File(widget.imgPath),
+                  //   fit: BoxFit.cover,
+                  // ),
                 )
                 : Positioned(
               top: 150,

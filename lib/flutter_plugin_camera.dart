@@ -11,6 +11,7 @@ import 'package:gallery_saver/gallery_saver.dart';
 import 'package:get/get.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:photo_view/photo_view.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:video_compress/video_compress.dart';
