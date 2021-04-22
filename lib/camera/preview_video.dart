@@ -1,14 +1,14 @@
 part of flutter_plugin_camera;
 
 class PreviewVideo extends StatefulWidget {
-  String videoPath;
-  bool compress;
+  final String videoPath;
+  final bool compress;
   final bool saveMedia;
-  ValueChanged<File> fileVideo;
+  final ValueChanged<File> fileVideo;
 
   PreviewVideo(
-      {this.fileVideo,
-      this.videoPath,
+      {required this.fileVideo,
+      required this.videoPath,
       this.compress = false,
       this.saveMedia = false});
   @override
@@ -17,8 +17,8 @@ class PreviewVideo extends StatefulWidget {
 
 class _PreviewVideoState extends State<PreviewVideo> {
   // VoidCallback videoPlayerListener;
-  VideoPlayerController videoController;
-  VoidCallback videoPlayerListener;
+  VideoPlayerController? videoController;
+  VoidCallback? videoPlayerListener;
   bool startedPlaying = false;
   String albumName = 'Media';
   final BehaviorSubject<bool> _visibilityCompress =
@@ -32,13 +32,13 @@ class _PreviewVideoState extends State<PreviewVideo> {
     final VideoPlayerController vcontroller =
         VideoPlayerController.file(File(widget.videoPath));
     videoPlayerListener = () {
-      if (videoController != null && videoController.value.size != null) {
+      if (videoController != null ) {
         // Refreshing the state to update video player with the correct ratio.
         if (mounted) setState(() {});
-        videoController.removeListener(videoPlayerListener);
+        videoController!.removeListener(videoPlayerListener!);
       }
     };
-    vcontroller.addListener(videoPlayerListener);
+    vcontroller.addListener(videoPlayerListener!);
     vcontroller.setLooping(true);
     vcontroller.initialize();
     videoController?.dispose();
@@ -67,7 +67,7 @@ class _PreviewVideoState extends State<PreviewVideo> {
       final Directory tempDir = await getTemporaryDirectory();
       final String videoOutput =
           tempDir.path + '/' + path.basenameWithoutExtension(widget.videoPath) + '.mp4';
-      var arguments = ["-i",info.path, "-c:v", "mpeg4", videoOutput];
+      var arguments = ["-i",info!.path, "-c:v", "mpeg4", videoOutput];
       final _compress = _flutterFFmpeg.executeWithArguments(arguments);
 
       if(_compress != null){
@@ -95,7 +95,7 @@ class _PreviewVideoState extends State<PreviewVideo> {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    videoController.dispose();
+    videoController!.dispose();
     _visibilityCompress.close();
   }
 
@@ -107,13 +107,14 @@ class _PreviewVideoState extends State<PreviewVideo> {
         child: StreamBuilder(
           stream: _visibilityCompress.stream,
             initialData: false,
-          builder: (context, snapshot) {
+          builder: (context, AsyncSnapshot<bool> snapshot) {
+            bool _check = snapshot.data ?? false;
             return Stack(
               alignment: Alignment.center,
               children: [
                 Padding(
                   padding: const EdgeInsets.only(top: 100, bottom: 100),
-                  child: VideoPlayer(videoController),
+                  child: VideoPlayer(videoController!),
                 ),
                 Positioned(
                   top: 0,
@@ -128,7 +129,7 @@ class _PreviewVideoState extends State<PreviewVideo> {
                         ),
                         GestureDetector(
                             onTap: () {
-                              videoController.pause();
+                              videoController!.pause();
                               Get.back();
                             },
                             child: Padding(
@@ -164,7 +165,7 @@ class _PreviewVideoState extends State<PreviewVideo> {
                       onTap: () {
                         video();
                       },
-                      child: (!snapshot.data)?Container(
+                      child: (!_check)?Container(
                         width: 60,
                         height: 60,
                         decoration: BoxDecoration(
@@ -184,7 +185,7 @@ class _PreviewVideoState extends State<PreviewVideo> {
                     )),
                 Positioned.fill(
                   child: Center(
-                    child: (snapshot.data)
+                    child: (_check)
                         ? const CircularProgressIndicator()
                         : Container(),
                   ),

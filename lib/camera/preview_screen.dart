@@ -7,8 +7,8 @@ class PreviewScreen extends StatefulWidget {
   ValueChanged<File> fileImage;
 
   PreviewScreen(
-      {this.fileImage,
-      this.imgPath,
+      {required this.fileImage,
+      required this.imgPath,
       this.compress = false,
       this.saveMedia = false});
 
@@ -17,7 +17,7 @@ class PreviewScreen extends StatefulWidget {
 }
 
 class _PreviewScreenState extends State<PreviewScreen> {
-  File cropped;
+  File? cropped;
   bool check = false;
   String albumName = 'Media';
 
@@ -52,7 +52,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
               top: 150,
               bottom: 150,
               child: Image.file(
-                File(cropped.path),
+                File(cropped!.path),
                 width: 500,
                 height: 500,
                 fit: BoxFit.cover,
@@ -131,9 +131,9 @@ class _PreviewScreenState extends State<PreviewScreen> {
                 child: GestureDetector(
                   onTap: () {
                     if (cropped != null) {
-                      widget.fileImage(File(cropped.path));
+                      widget.fileImage(File(cropped!.path));
                       if(widget.saveMedia == true){
-                        GallerySaver.saveImage(cropped.path, albumName: albumName)
+                        GallerySaver.saveImage(cropped!.path, albumName: albumName)
                             .then((bool success) {
                           print('Luu thanh cong');
                         });
@@ -188,9 +188,9 @@ class _PreviewScreenState extends State<PreviewScreen> {
           // statusBarColor: Colors.deepOrange.shade900,
           backgroundColor: Colors.white,
         ));
-    print(cropped.path);
+    print(cropped!.path);
     this.setState(() {
-      widget.imgPath = cropped.path;
+      widget.imgPath = cropped!.path;
     });
   }
 
@@ -204,7 +204,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
         filePath, outPath,
         minWidth: 1000, minHeight: 1000, quality: 20);
     this.setState(() {
-      widget.imgPath = compressedImage.absolute.path;
+      widget.imgPath = compressedImage!.absolute.path;
     });
   }
 }

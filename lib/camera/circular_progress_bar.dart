@@ -3,8 +3,8 @@ part of flutter_plugin_camera;
 class CircleProgressBar extends StatefulWidget {
   const CircleProgressBar({
     key,
-    this.outerRadius,
-    this.ringsWidth,
+    required this.outerRadius,
+    required this.ringsWidth,
     this.ringsColor = Colors.red,
     this.progress = 0.0,
     this.duration = const Duration(seconds: 15),
@@ -24,7 +24,7 @@ class CircleProgressState extends State<CircleProgressBar>
     with SingleTickerProviderStateMixin {
   final GlobalKey paintKey = GlobalKey();
 
-  AnimationController progressController;
+  AnimationController? progressController;
 
   @override
   void initState() {
@@ -34,13 +34,13 @@ class CircleProgressState extends State<CircleProgressBar>
       vsync: this,
     )..value = widget.progress;
     SchedulerBinding.instance?.addPostFrameCallback((Duration _) {
-      progressController.forward();
+      progressController!.forward();
     });
   }
 
   @override
   void dispose() {
-    progressController.dispose();
+    progressController!.dispose();
     super.dispose();
   }
 
@@ -49,12 +49,12 @@ class CircleProgressState extends State<CircleProgressBar>
     final Size size = Size.square(widget.outerRadius * 2);
     return Center(
       child: AnimatedBuilder(
-        animation: progressController,
+        animation: progressController!,
         builder: (_, __) => CustomPaint(
           key: paintKey,
           size: size,
           painter: ProgressPainter(
-            progress: progressController.value,
+            progress: progressController!.value,
             ringsWidth: widget.ringsWidth,
             ringsColor: widget.ringsColor,
           ),
@@ -66,9 +66,9 @@ class CircleProgressState extends State<CircleProgressBar>
 
 class ProgressPainter extends CustomPainter {
   const ProgressPainter({
-    this.ringsWidth,
-    this.ringsColor,
-    this.progress,
+    required this.ringsWidth,
+    required this.ringsColor,
+    required this.progress,
   });
 
   final double ringsWidth;
