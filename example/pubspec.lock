@@ -131,11 +131,9 @@ packages:
   gallery_saver:
     dependency: transitive
     description:
-      path: "."
-      ref: HEAD
-      resolved-ref: ebf43caa23a0d734e7cce3d575bb444a61ce5913
-      url: "https://github.com/shofizone/gallery_saver"
-    source: git
+      name: gallery_saver
+      url: "https://pub.dartlang.org"
+    source: hosted
     version: "2.1.0"
   get:
     dependency: "direct main"

@@ -75,7 +75,7 @@ class _PreviewVideoState extends State<PreviewVideo> {
         _visibilityCompress.sink.add(false);
       }
       if(widget.saveMedia == true){
-        GallerySaver.saveVideo(videoOutput, albumName: albumName).then((bool success) {
+        GallerySaver.saveVideo(videoOutput, albumName: albumName).then((bool? success) {
           print('Luu thanh cong');
         });
       }
@@ -83,7 +83,7 @@ class _PreviewVideoState extends State<PreviewVideo> {
     } else {
       widget.fileVideo(File(widget.videoPath));
       if(widget.saveMedia == true){
-        GallerySaver.saveVideo(widget.videoPath, albumName: albumName).then((bool success) {
+        GallerySaver.saveVideo(widget.videoPath, albumName: albumName).then((bool? success) {
           print('Luu thanh cong');
         });
       }
