@@ -32,7 +32,7 @@ class CameraScreen extends StatefulWidget {
     this.timeOutVideoCamera = 0,
     this.compressVideo = false,
     this.compressImage = false,
-    this.onResutl,
+    required this.onResutl,
     this.saveMedia = false,
     this.disableVideoRecord = false,
     this.speciesCamera = 0,
@@ -43,29 +43,30 @@ class CameraScreen extends StatefulWidget {
 }
 
 class _CameraScreenState extends State<CameraScreen> {
-  List cameras;
+  List? cameras;
   String timestamp() => DateTime.now().millisecondsSinceEpoch.toString();
   final BehaviorSubject<bool> visibilityController =
-      BehaviorSubject<bool>.seeded(false);
+  BehaviorSubject<bool>.seeded(false);
   final StopWatchTimer _stopWatchTimer = StopWatchTimer(
     isLapHours: true,
   );
-  CameraController controller;
+  CameraController? controller;
   FlashMode flashMode = FlashMode.off;
   int selectedCameraIndex = 0;
-  XFile imageFile;
-  XFile videoFile;
-  VoidCallback videoPlayerListener;
+  XFile? imageFile;
+  XFile? videoFile;
+  VoidCallback? videoPlayerListener;
   double _minAvailableZoom = 1.0;
   double _maxAvailableZoom = 1.0;
   double _currentScale = 1.0;
   double _baseScale = 1.0;
   bool enableAudio = true;
-  Timer _timer;
+  Timer? _timer;
   int _pointers = 0;
   double scale = 1.0;
   var result;
-  Duration maximumRecordingDuration;
+  Duration? maximumRecordingDuration;
+  CameraDescription? cameraDescription;
 
   List<String> text = <String>[
     'CHỤP ẢNH',
@@ -75,7 +76,7 @@ class _CameraScreenState extends State<CameraScreen> {
   @override
   void dispose() async {
     super.dispose();
-    controller?.dispose();
+    controller!.dispose();
     visibilityController.close();
     await _stopWatchTimer.dispose();
   }
@@ -85,11 +86,11 @@ class _CameraScreenState extends State<CameraScreen> {
     super.initState();
     availableCameras().then((availableCameras) {
       cameras = availableCameras;
-      if (cameras.length > 0) {
+      if (cameras!.length > 0) {
         setState(() {
           selectedCameraIndex = widget.speciesCamera;
         });
-        _initCameraController(cameras[selectedCameraIndex]).then((void v) {});
+        _initCameraController(cameras![selectedCameraIndex]).then((void v) {});
       } else {
         print('No camera available');
       }
@@ -105,26 +106,24 @@ class _CameraScreenState extends State<CameraScreen> {
   }
 
   Future _initCameraController(CameraDescription cameraDescription) async {
-    if (controller != null) {
-      await controller.dispose();
-    }
+
     controller = CameraController(cameraDescription, ResolutionPreset.high);
 
-    controller.addListener(() {
+    controller!.addListener(() {
       if (mounted) {
         setState(() {});
       }
 
-      if (controller.value.hasError) {
-        print('Camera error ${controller.value.errorDescription}');
+      if (controller!.value.hasError) {
+        print('Camera error ${controller!.value.errorDescription}');
       }
     });
 
     try {
-      await controller.initialize();
+      await controller!.initialize();
       await Future.wait([
-        controller.getMaxZoomLevel().then((value) => _maxAvailableZoom = value),
-        controller.getMinZoomLevel().then((value) => _minAvailableZoom = value),
+        controller!.getMaxZoomLevel().then((value) => _maxAvailableZoom = value),
+        controller!.getMinZoomLevel().then((value) => _minAvailableZoom = value),
       ]);
     } on CameraException catch (e) {
       print(e);
@@ -150,7 +149,7 @@ class _CameraScreenState extends State<CameraScreen> {
   }
 
   Widget _cameraPreviewWidget(context) {
-    if (controller == null || !controller.value.isInitialized) {
+    if ( controller == null || !controller!.value.isInitialized) {
       return const Text(
         'Loading',
         style: TextStyle(
@@ -173,7 +172,7 @@ class _CameraScreenState extends State<CameraScreen> {
                   onPointerDown: (_) => _pointers++,
                   onPointerUp: (_) => _pointers--,
                   child: CameraPreview(
-                    controller,
+                    controller!,
                     child: LayoutBuilder(builder:
                         (BuildContext context, BoxConstraints constraints) {
                       return GestureDetector(
@@ -189,267 +188,267 @@ class _CameraScreenState extends State<CameraScreen> {
                 // Nut back
                 (snapshot.data == false)
                     ? Positioned(
-                        top: 48,
-                        left: 15,
-                        child: GestureDetector(
-                            onTap: () {
-                              Get.back();
-                            },
-                            child: Icon(
-                              Icons.arrow_back_ios_outlined,
-                              color: Colors.white,
-                              size: 30,
-                            )))
+                    top: 55,
+                    left: 15,
+                    child: GestureDetector(
+                        onTap: () {
+                          Get.back();
+                        },
+                        child: Icon(
+                          Icons.arrow_back_ios_outlined,
+                          color: Colors.white,
+                          size: 30,
+                        )))
                     : SizedBox.shrink(),
                 // Nut den flash
                 (snapshot.data == false && (text[0] == 'CHỤP ẢNH'))
-                    ? Positioned(top: 38, right: 80, child: _flashButton())
+                    ? Positioned(top: 42, right: 80, child: _flashButton())
                     : SizedBox.shrink(),
                 // Nut chuyen camera
                 (snapshot.data == false)
                     ? Positioned(
-                        top: 43,
-                        right: 20,
-                        child: _cameraTogglesRowWidget(),
-                      )
+                  top: 50,
+                  right: 20,
+                  child: _cameraTogglesRowWidget(),
+                )
                     : SizedBox.shrink(),
                 // Nut chup va quay video
                 (snapshot.data == false)
                     ? Positioned(
-                        bottom: 10.0,
-                        left: 0.0,
-                        right: 0.0,
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 45),
-                          child: (text[0] == 'CHỤP ẢNH')
-                              ? GestureDetector(
-                                  behavior: HitTestBehavior.translucent,
-                                  onTap: () {
-                                    onTakePictureButtonPressed(context);
-                                  },
-                                  child: Align(
-                                    alignment: Alignment.bottomCenter,
-                                    child: new Container(
-                                      width: 70.0,
-                                      height: 70.0,
-                                      decoration: new BoxDecoration(
-                                        borderRadius: new BorderRadius.all(
-                                            new Radius.circular(50.0)),
-                                        border: new Border.all(
-                                          color: Colors.white,
-                                          width: 3.0,
-                                        ),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(5.0),
-                                        child: Container(
-                                          width: 30.0,
-                                          height: 30.0,
-                                          decoration: new BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: new BorderRadius.all(
-                                                new Radius.circular(50.0)),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : GestureDetector(
-                                  onTap: () {
-                                    onVideoRecordButtonPressed();
-                                    _stopWatchTimer.onExecute
-                                        .add(StopWatchExecute.start);
-                                    visibilityController.sink.add(true);
-                                    if (widget.timeOutVideoCamera != 0) {
-                                      checkTime();
-                                    } else {
-                                      defaultTime();
-                                    }
-                                  },
-                                  child: Align(
-                                    alignment: Alignment.bottomCenter,
-                                    child: new Container(
-                                      width: 70.0,
-                                      height: 70.0,
-                                      decoration: new BoxDecoration(
-                                        borderRadius: new BorderRadius.all(
-                                            new Radius.circular(50.0)),
-                                        border: new Border.all(
-                                          color: Colors.white,
-                                          width: 3.0,
-                                        ),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(5.0),
-                                        child: Container(
-                                          width: 30.0,
-                                          height: 30.0,
-                                          decoration: new BoxDecoration(
-                                            color: Colors.red,
-                                            borderRadius: new BorderRadius.all(
-                                                new Radius.circular(50.0)),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                        ),
-                      )
-                    : SizedBox.shrink(),
-                // Nut chuyen camera, video
-                (snapshot.data == false)
-                    ? Positioned(
-                        bottom: 20.0,
-                        left: 0,
-                        right: 0,
-                        child: Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Text(
-                            text[0],
-                            style: TextStyle(color: Colors.white),
+                  bottom: 10.0,
+                  left: 0.0,
+                  right: 0.0,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 45),
+                    child: (text[0] == 'CHỤP ẢNH')
+                        ? GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () {
+                        onTakePictureButtonPressed(context);
+                      },
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: new Container(
+                          width: 70.0,
+                          height: 70.0,
+                          decoration: new BoxDecoration(
+                            borderRadius: new BorderRadius.all(
+                                new Radius.circular(50.0)),
+                            border: new Border.all(
+                              color: Colors.white,
+                              width: 3.0,
+                            ),
                           ),
-                        ),
-                      )
-                    : SizedBox.shrink(),
-                // Nut chuyen camera, video
-                (snapshot.data == false)
-                    ? Positioned(
-                        bottom: 20.0,
-                        left: 0,
-                        right: 0,
-                        child: (widget.disableVideoRecord != true)?GestureDetector(
-                          onTap: () {
-                            if (text[0] == 'CHỤP ẢNH') {
-                              text.sort((a, b) => a.length.compareTo(b.length));
-                            } else {
-                              text.sort((a, b) => b.length.compareTo(a.length));
-                            }
-                            setState(() {});
-                          },
-                          child: Align(
-                            alignment: Alignment.centerRight,
-                            child: Padding(
-                              padding: const EdgeInsets.only(right: 80),
-                              child: Text(
-                                text[1],
-                                style: TextStyle(color: Colors.white),
+                          child: Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Container(
+                              width: 30.0,
+                              height: 30.0,
+                              decoration: new BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: new BorderRadius.all(
+                                    new Radius.circular(50.0)),
                               ),
                             ),
                           ),
-                        )  : SizedBox.shrink(),
-                      )
+                        ),
+                      ),
+                    )
+                        : GestureDetector(
+                      onTap: () {
+                        onVideoRecordButtonPressed();
+                        _stopWatchTimer.onExecute
+                            .add(StopWatchExecute.start);
+                        visibilityController.sink.add(true);
+                        if (widget.timeOutVideoCamera != 0) {
+                          checkTime();
+                        } else {
+                          defaultTime();
+                        }
+                      },
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: new Container(
+                          width: 70.0,
+                          height: 70.0,
+                          decoration: new BoxDecoration(
+                            borderRadius: new BorderRadius.all(
+                                new Radius.circular(50.0)),
+                            border: new Border.all(
+                              color: Colors.white,
+                              width: 3.0,
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Container(
+                              width: 30.0,
+                              height: 30.0,
+                              decoration: new BoxDecoration(
+                                color: Colors.red,
+                                borderRadius: new BorderRadius.all(
+                                    new Radius.circular(50.0)),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+                    : SizedBox.shrink(),
+                // Nut chuyen camera, video
+                (snapshot.data == false)
+                    ? Positioned(
+                  bottom: 20.0,
+                  left: 0,
+                  right: 0,
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Text(
+                      text[0],
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                )
+                    : SizedBox.shrink(),
+                // Nut chuyen camera, video
+                (snapshot.data == false)
+                    ? Positioned(
+                  bottom: 20.0,
+                  left: 0,
+                  right: 0,
+                  child: (widget.disableVideoRecord != true)?GestureDetector(
+                    onTap: () {
+                      if (text[0] == 'CHỤP ẢNH') {
+                        text.sort((a, b) => a.length.compareTo(b.length));
+                      } else {
+                        text.sort((a, b) => b.length.compareTo(a.length));
+                      }
+                      setState(() {});
+                    },
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 80),
+                        child: Text(
+                          text[1],
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  )  : SizedBox.shrink(),
+                )
                     : SizedBox.shrink(),
                 // Time quay video
                 Positioned(
                   right: 15,
-                  top: 40,
+                  top: 50,
                   left: 15,
                   child: (text[0] != 'CHỤP ẢNH')
                       ? Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            StreamBuilder<int>(
-                              stream: _stopWatchTimer.rawTime,
-                              initialData:
-                                  _stopWatchTimer.rawTime.valueWrapper?.value,
-                              builder: (context, snap) {
-                                final value = snap.data;
-                                final displayTime = StopWatchTimer.getDisplayTime(
-                                    value,
-                                    milliSecond: false);
-                                return Column(
-                                  children: <Widget>[
-                                    Padding(
-                                      padding: const EdgeInsets.all(8),
-                                      child: Text(
-                                        displayTime,
-                                        style: const TextStyle(
-                                          color: Colors.red,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              },
-                            ),
-                            (widget.timeOutVideoCamera != 0)
-                                ? Text('/ ', style: TextStyle(color: Colors.red))
-                                : SizedBox.shrink(),
-                            (widget.timeOutVideoCamera != 0)
-                                ? Text(
-                                    ' 00:00:${widget.timeOutVideoCamera.toString().padLeft(2, '0')}',
-                                    style: TextStyle(color: Colors.red),
-                                  )
-                                : SizedBox.shrink()
-                          ],
-                        )
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      StreamBuilder<int>(
+                        stream: _stopWatchTimer.rawTime,
+                        initialData:
+                        _stopWatchTimer.rawTime.valueWrapper?.value,
+                        builder: (context, snap) {
+                          final value = snap.data;
+                          final displayTime = StopWatchTimer.getDisplayTime(
+                              value!,
+                              milliSecond: false);
+                          return Column(
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.all(8),
+                                child: Text(
+                                  displayTime,
+                                  style: const TextStyle(
+                                    color: Colors.red,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                      (widget.timeOutVideoCamera != 0)
+                          ? Text('/ ', style: TextStyle(color: Colors.red))
+                          : SizedBox.shrink(),
+                      (widget.timeOutVideoCamera != 0)
+                          ? Text(
+                        ' 00:00:${widget.timeOutVideoCamera.toString().padLeft(2, '0')}',
+                        style: TextStyle(color: Colors.red),
+                      )
+                          : SizedBox.shrink()
+                    ],
+                  )
                       : SizedBox.shrink(),
                 ),
                 // Nut dung quay video
                 (snapshot.data != false)
                     ? Positioned(
-                        bottom: 10.0,
-                        left: 0.0,
-                        right: 0.0,
-                        child: Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 45),
-                            child: GestureDetector(
-                              child: Align(
-                                alignment: Alignment.bottomCenter,
-                                child: new Container(
-                                  width: 70.0,
-                                  height: 70.0,
-                                  decoration: new BoxDecoration(
-                                    borderRadius: new BorderRadius.all(
-                                        new Radius.circular(50.0)),
-                                    border: new Border.all(
-                                      color: Colors.white,
-                                      width: 3.0,
-                                    ),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(15.0),
-                                    child: Container(
-                                      width: 10.0,
-                                      height: 10.0,
-                                      decoration: new BoxDecoration(
-                                        color: Colors.red,
-                                        borderRadius: new BorderRadius.all(
-                                            new Radius.circular(2.0)),
-                                      ),
-                                    ),
-                                  ),
+                  bottom: 10.0,
+                  left: 0.0,
+                  right: 0.0,
+                  child: Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 45),
+                      child: GestureDetector(
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: new Container(
+                            width: 70.0,
+                            height: 70.0,
+                            decoration: new BoxDecoration(
+                              borderRadius: new BorderRadius.all(
+                                  new Radius.circular(50.0)),
+                              border: new Border.all(
+                                color: Colors.white,
+                                width: 3.0,
+                              ),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: Container(
+                                width: 10.0,
+                                height: 10.0,
+                                decoration: new BoxDecoration(
+                                  color: Colors.red,
+                                  borderRadius: new BorderRadius.all(
+                                      new Radius.circular(2.0)),
                                 ),
                               ),
-                            )),
-                      )
+                            ),
+                          ),
+                        ),
+                      )),
+                )
                     : SizedBox.shrink(),
                 // circular progress time
                 (snapshot.data != false)
                     ? Positioned(
-                        bottom: 10.0,
-                        left: 0.0,
-                        right: 0.0,
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 45),
-                          child: GestureDetector(
-                            behavior: HitTestBehavior.translucent,
-                            onTap: () {
-                              onStopButtonPressed();
-                              _stopWatchTimer.onExecute
-                                  .add(StopWatchExecute.reset);
-                              visibilityController.sink.add(false);
-                            },
-                            child: CircleProgressBar(
-                              duration: maximumRecordingDuration,
-                              outerRadius: 35,
-                              ringsWidth: 2.0,
-                            ),
-                          ),
-                        ),
-                      )
+                  bottom: 10.0,
+                  left: 0.0,
+                  right: 0.0,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 45),
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () {
+                        onStopButtonPressed();
+                        _stopWatchTimer.onExecute
+                            .add(StopWatchExecute.reset);
+                        visibilityController.sink.add(false);
+                      },
+                      child: CircleProgressBar(
+                        duration: maximumRecordingDuration!,
+                        outerRadius: 35,
+                        ringsWidth: 2.0,
+                      ),
+                    ),
+                  ),
+                )
                     : SizedBox.shrink(),
               ],
             );
@@ -458,7 +457,7 @@ class _CameraScreenState extends State<CameraScreen> {
   }
 
   Widget _cameraTogglesRowWidget() {
-    CameraDescription selectedCamera = cameras[selectedCameraIndex];
+    CameraDescription selectedCamera = cameras![selectedCameraIndex];
     CameraLensDirection lensDirection = selectedCamera.lensDirection;
     return GestureDetector(
       onTap: () {
@@ -485,7 +484,7 @@ class _CameraScreenState extends State<CameraScreen> {
     _currentScale = (_baseScale * details.scale)
         .clamp(_minAvailableZoom, _maxAvailableZoom);
 
-    await controller.setZoomLevel(_currentScale);
+    await controller!.setZoomLevel(_currentScale);
   }
 
   void onViewFinderTap(TapDownDetails details, BoxConstraints constraints) {
@@ -493,7 +492,7 @@ class _CameraScreenState extends State<CameraScreen> {
       return;
     }
 
-    final CameraController cameraController = controller;
+    final CameraController cameraController = controller!;
 
     final offset = Offset(
       details.localPosition.dx / constraints.maxWidth,
@@ -503,9 +502,9 @@ class _CameraScreenState extends State<CameraScreen> {
     cameraController.setFocusPoint(offset);
   }
 
-  Future<XFile> takePicture() async {
-    final CameraController cameraController = controller;
-    if (cameraController == null || !cameraController.value.isInitialized) {
+  Future<XFile?> takePicture() async {
+    final CameraController cameraController = controller!;
+    if (!cameraController.value.isInitialized) {
       return null;
     }
 
@@ -523,7 +522,7 @@ class _CameraScreenState extends State<CameraScreen> {
   }
 
   void onTakePictureButtonPressed(context) {
-    takePicture().then((XFile file) async {
+    takePicture().then((XFile? file) async {
       if (mounted) {
         if (file != null) {
           print('Picture saved to ${file.path}');
@@ -542,9 +541,6 @@ class _CameraScreenState extends State<CameraScreen> {
   }
 
   void onNewCameraSelected(CameraDescription cameraDescription) async {
-    if (controller != null) {
-      await controller.dispose();
-    }
     final CameraController cameraController = CameraController(
       cameraDescription,
       ResolutionPreset.medium,
@@ -582,8 +578,8 @@ class _CameraScreenState extends State<CameraScreen> {
 
   void _onSwitchCamera() async {
     selectedCameraIndex =
-        selectedCameraIndex < cameras.length - 1 ? selectedCameraIndex + 1 : 0;
-    CameraDescription selectedCamera = cameras[selectedCameraIndex];
+    selectedCameraIndex < cameras!.length - 1 ? selectedCameraIndex + 1 : 0;
+    CameraDescription selectedCamera = cameras![selectedCameraIndex];
 
     _initCameraController(selectedCamera);
   }
@@ -611,7 +607,7 @@ class _CameraScreenState extends State<CameraScreen> {
     return IconButton(
       icon: Icon(iconData),
       color: color,
-      onPressed: controller != null && controller.value.isInitialized
+      onPressed:  controller!.value.isInitialized
           ? _onFlashButtonPressed
           : null,
     );
@@ -629,7 +625,7 @@ class _CameraScreenState extends State<CameraScreen> {
       flashMode = FlashMode.off;
     }
     // Apply the new mode
-    await controller.setFlashMode(flashMode);
+    await controller!.setFlashMode(flashMode);
 
     // Change UI State
     setState(() {});
@@ -642,9 +638,9 @@ class _CameraScreenState extends State<CameraScreen> {
   }
 
   Future<void> startVideoRecording() async {
-    final CameraController cameraController = controller;
+    final CameraController cameraController = controller!;
 
-    if (cameraController == null || !cameraController.value.isInitialized) {
+    if (!cameraController.value.isInitialized) {
       print('Error: select a camera first.');
       return;
     }
@@ -668,23 +664,23 @@ class _CameraScreenState extends State<CameraScreen> {
       if (file != null) {
         videoFile = file;
         result = await Get.to(() => PreviewVideo(
-              fileVideo: widget.onResutl,
-              videoPath: file.path,
-              compress: widget.compressVideo,
-              saveMedia: widget.saveMedia,
-            ));
+          fileVideo: widget.onResutl,
+          videoPath: file.path,
+          compress: widget.compressVideo,
+          saveMedia: widget.saveMedia,
+        ));
         if (result != null) {
           Get.back();
         }
       }
     });
-    if (_timer != null) _timer.cancel();
+    if (_timer != null) _timer!.cancel();
   }
 
-  Future<XFile> stopVideoRecording() async {
-    final CameraController cameraController = controller;
+  Future<XFile?> stopVideoRecording() async {
+    final CameraController cameraController = controller!;
 
-    if (cameraController == null || !cameraController.value.isRecordingVideo) {
+    if (!cameraController.value.isRecordingVideo) {
       return null;
     }
 
@@ -698,12 +694,12 @@ class _CameraScreenState extends State<CameraScreen> {
 
   void checkTime() {
     _timer = Timer.periodic(Duration(seconds: widget.timeOutVideoCamera + 1),
-        (Timer t) {
-      _stopWatchTimer.onExecute.add(StopWatchExecute.reset);
-      visibilityController.sink.add(false);
-      onStopButtonPressed();
-      _timer.cancel();
-    });
+            (Timer t) {
+          _stopWatchTimer.onExecute.add(StopWatchExecute.reset);
+          visibilityController.sink.add(false);
+          onStopButtonPressed();
+          _timer!.cancel();
+        });
   }
 
   void defaultTime() {
@@ -711,7 +707,7 @@ class _CameraScreenState extends State<CameraScreen> {
       _stopWatchTimer.onExecute.add(StopWatchExecute.reset);
       visibilityController.sink.add(false);
       onStopButtonPressed();
-      _timer.cancel();
+      _timer!.cancel();
     });
   }
 }
