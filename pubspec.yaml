@@ -16,7 +16,6 @@ dependencies:
   video_player: ^2.1.1
   image_cropper: ^1.4.0
   get: ^4.1.4
-  rxdart: ^0.27.0
   stop_watch_timer: ^1.1.0+1
   flutter_image_compress: ^1.0.0
   video_compress: ^3.0.0

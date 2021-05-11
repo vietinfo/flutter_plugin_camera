@@ -5,21 +5,15 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:get/get.dart';
 import 'package:image_cropper/image_cropper.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
-import 'package:video_compress/video_compress.dart';
 import 'package:video_player/video_player.dart';
 import 'dart:math' as math;
 import 'package:flutter/scheduler.dart';
-import 'package:path/path.dart' as path;
-import 'camera/widget/video_player_widget.dart';
 import 'camera/widget/video_player_both_widget.dart';
 
 
