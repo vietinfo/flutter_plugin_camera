@@ -36,8 +36,8 @@ class MyApp extends StatelessWidget {
         onTap: (){
           Get.to(() => CameraScreen(
             saveMedia: true,
-            compressVideo: true,
-            compressImage: true,
+            // compressVideo: true,
+            // compressImage: true,
             speciesCamera: 1,
             timeOutVideoCamera: 5,
             onResutl: (value){

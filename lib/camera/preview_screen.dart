@@ -1,10 +1,10 @@
 part of flutter_plugin_camera;
 
 class PreviewScreen extends StatefulWidget {
-  String imgPath;
-  bool compress;
+  late final String imgPath;
+  final bool compress;
   final bool saveMedia;
-  ValueChanged<File> fileImage;
+  final ValueChanged<File> fileImage;
 
   PreviewScreen(
       {required this.fileImage,
@@ -25,9 +25,9 @@ class _PreviewScreenState extends State<PreviewScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    if (widget.compress == true) {
-      compressImage(widget.imgPath);
-    }
+    // if (widget.compress == true) {
+    //   compressImage(widget.imgPath);
+    // }
   }
 
   @override
@@ -194,17 +194,17 @@ class _PreviewScreenState extends State<PreviewScreen> {
     });
   }
 
-  void compressImage(String patch) async {
-    final filePath = patch;
-    final lastIndex = filePath.lastIndexOf(new RegExp(r'.jp'));
-    final splitted = filePath.substring(0, (lastIndex));
-    final outPath = "${splitted}_out${filePath.substring(lastIndex)}";
-
-    final compressedImage = await FlutterImageCompress.compressAndGetFile(
-        filePath, outPath,
-        minWidth: 1000, minHeight: 1000, quality: 20);
-    this.setState(() {
-      widget.imgPath = compressedImage!.absolute.path;
-    });
-  }
+  // void compressImage(String patch) async {
+  //   final filePath = patch;
+  //   final lastIndex = filePath.lastIndexOf(new RegExp(r'.jp'));
+  //   final splitted = filePath.substring(0, (lastIndex));
+  //   final outPath = "${splitted}_out${filePath.substring(lastIndex)}";
+  //
+  //   final compressedImage = await FlutterImageCompress.compressAndGetFile(
+  //       filePath, outPath,
+  //       minWidth: 1000, minHeight: 1000, quality: 20);
+  //   this.setState(() {
+  //     widget.imgPath = compressedImage!.absolute.path;
+  //   });
+  // }
 }

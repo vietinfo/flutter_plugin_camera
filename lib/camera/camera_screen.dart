@@ -6,32 +6,32 @@
 part of flutter_plugin_camera;
 class CameraScreen extends StatefulWidget {
 
-  // Set time quay video theo giây, mặc định timeOutVideoCamera = 30 phút .
+  /// Set time quay video theo giây, mặc định timeOutVideoCamera = 30 phút .
   final int timeOutVideoCamera;
 
-  // Nén chất lượng video, mặt định compressVideo = false.
-  final bool compressVideo;
+  /// Nén chất lượng video, mặt định compressVideo = false.
+  //final bool compressVideo;
 
-  // Nén chất lượng hình ảnh, mặt định compressImage = false.
-  final bool compressImage;
+  /// Nén chất lượng hình ảnh, mặt định compressImage = false.
+  //final bool compressImage;
 
-  // Lưu ảnh & video xuống máy, mặc định saveMedia = false sẽ không lưu.
+  /// Lưu ảnh & video xuống máy, mặc định saveMedia = false sẽ không lưu.
   final bool saveMedia;
 
-  // Kết quả trả về dạng file.
-  // vd: onResutl: (value){print(value);},
+  /// Kết quả trả về dạng file.
+  /// vd: onResutl: (value){print(value);},
   final ValueChanged<File> onResutl;
 
-  // Tắt quay video, nếu disableVideoRecord = true sẽ tắt chế độ quay video.
+  /// Tắt quay video, nếu disableVideoRecord = true sẽ tắt chế độ quay video.
   final disableVideoRecord;
 
-  // Chỉnh cam mặc định 0: cam sau, 1: cam trước
+  /// Chỉnh cam mặc định 0: cam sau, 1: cam trước
   final int speciesCamera;
 
   CameraScreen({
     this.timeOutVideoCamera = 0,
-    this.compressVideo = false,
-    this.compressImage = false,
+    // this.compressVideo = false,
+    // this.compressImage = false,
     required this.onResutl,
     this.saveMedia = false,
     this.disableVideoRecord = false,
@@ -529,7 +529,7 @@ class _CameraScreenState extends State<CameraScreen> {
           result = await Get.to(PreviewScreen(
             fileImage: widget.onResutl,
             imgPath: file.path,
-            compress: widget.compressImage,
+
             saveMedia: widget.saveMedia,
           ));
           if (result != null) {
@@ -666,7 +666,7 @@ class _CameraScreenState extends State<CameraScreen> {
         result = await Get.to(() => PreviewVideo(
           fileVideo: widget.onResutl,
           videoPath: file.path,
-          compress: widget.compressVideo,
+
           saveMedia: widget.saveMedia,
         ));
         if (result != null) {

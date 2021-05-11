@@ -19,7 +19,11 @@ import 'package:video_player/video_player.dart';
 import 'dart:math' as math;
 import 'package:flutter/scheduler.dart';
 import 'package:path/path.dart' as path;
+import 'camera/widget/video_player_widget.dart';
+import 'camera/widget/video_player_both_widget.dart';
 
+
+import 'camera/widget/advanced_overlay_widget.dart';
 part 'camera/camera_screen.dart';
 part 'camera/preview_screen.dart';
 part 'camera/preview_video.dart';

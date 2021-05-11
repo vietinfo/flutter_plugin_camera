@@ -1,5 +1,9 @@
 part of flutter_plugin_camera;
 
+
+
+
+
 class PreviewVideo extends StatefulWidget {
   final String videoPath;
   final bool compress;
@@ -25,70 +29,26 @@ class _PreviewVideoState extends State<PreviewVideo> {
   BehaviorSubject<bool>.seeded(false);
 
 
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    final VideoPlayerController vcontroller =
-    VideoPlayerController.file(File(widget.videoPath));
-    videoPlayerListener = () {
-      if (videoController != null ) {
-        // Refreshing the state to update video player with the correct ratio.
-        if (mounted) setState(() {});
-        videoController!.removeListener(videoPlayerListener!);
-      }
-    };
-    vcontroller.addListener(videoPlayerListener!);
-    vcontroller.setLooping(true);
-    vcontroller.initialize();
-    videoController?.dispose();
-    if (mounted) {
-      setState(() {
-        videoController = vcontroller;
-      });
-    }
-    vcontroller.play();
+    videoController = VideoPlayerController.file(File(widget.videoPath))
+      ..addListener(() => setState(() {}))
+      ..setLooping(true)
+      ..initialize().then((_) => videoController!.play());
   }
 
   Future video() async {
 
-    if (widget.compress == true) {
-      _visibilityCompress.sink.add(true);
-      final info = await VideoCompress.compressVideo(
-        widget.videoPath,
-        quality: VideoQuality.LowQuality,
-        deleteOrigin: false,
-        includeAudio: true,
-      );
-
-
-      final FlutterFFmpeg _flutterFFmpeg = FlutterFFmpeg();
-
-      final Directory tempDir = await getTemporaryDirectory();
-      final String videoOutput =
-          tempDir.path + '/' + path.basenameWithoutExtension(widget.videoPath) + '.mp4';
-      var arguments = ["-i",info!.path, "-c:v", "mpeg4", videoOutput];
-      final _compress = _flutterFFmpeg.executeWithArguments(arguments);
-
-      if(_compress != null){
-        widget.fileVideo(File(videoOutput));
-        _visibilityCompress.sink.add(false);
-      }
-      if(widget.saveMedia == true){
-        GallerySaver.saveVideo(videoOutput, albumName: albumName).then((bool? success) {
-          print('Luu thanh cong');
-        });
-      }
-      Get.back(result: 1);
-    } else {
-      widget.fileVideo(File(widget.videoPath));
-      if(widget.saveMedia == true){
-        GallerySaver.saveVideo(widget.videoPath, albumName: albumName).then((bool? success) {
-          print('Luu thanh cong');
-        });
-      }
-      Get.back(result: 1);
+    widget.fileVideo(File(widget.videoPath));
+    if(widget.saveMedia == true){
+      GallerySaver.saveVideo(widget.videoPath, albumName: albumName).then((bool? success) {
+        print('Luu thanh cong');
+      });
     }
+    Get.back(result: 1);
   }
 
   @override
@@ -112,16 +72,23 @@ class _PreviewVideoState extends State<PreviewVideo> {
               return Stack(
                 alignment: Alignment.center,
                 children: [
+                  // Padding(
+                  //   padding: const EdgeInsets.only(top: 80, bottom: 80),
+                  //   child: ,
+                  // ),
+                  // Padding(
+                  //   padding: const EdgeInsets.only(bottom: 65),
+                  //   child: VideoPlayerWidget(controller: videoController!),
+                  // ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 100, bottom: 100),
-                    child: VideoPlayer(videoController!),
+                    padding: const EdgeInsets.only(bottom: 65, top: 50),
+                    child: VideoPlayerBothWidget(controller: videoController!),
                   ),
                   Positioned(
                     top: 0,
                     child: Container(
                       height: 80,
                       width: MediaQuery.of(context).size.width,
-                      color: Colors.black12.withOpacity(0.5),
                       child: Row(
                         children: [
                           SizedBox(
@@ -147,20 +114,9 @@ class _PreviewVideoState extends State<PreviewVideo> {
                       ),
                     ),
                   ),
+
                   Positioned(
-                    bottom: 0,
-                    child: Container(
-                      height: 50,
-                      width: MediaQuery.of(context).size.width,
-                      color: Colors.black12.withOpacity(0.5),
-                      child: Row(
-                        children: [],
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                      bottom: 25,
-                      right: 15,
+                      bottom: 0,
                       child: GestureDetector(
                         onTap: () {
                           video();
