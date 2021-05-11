@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:native_device_orientation/native_device_orientation.dart';
 import 'package:video_player/video_player.dart';
-import 'package:wakelock/wakelock.dart';
+// import 'package:wakelock/wakelock.dart';
 
 import 'advanced_overlay_widget.dart';
 
@@ -52,10 +52,10 @@ class _VideoPlayerBothWidgetState extends State<VideoPlayerBothWidget> {
 
   void setOrientation(bool isPortrait) {
     if (isPortrait) {
-      Wakelock.disable();
+      //Wakelock.disable();
       SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
     } else {
-      Wakelock.enable();
+      //Wakelock.enable();
       SystemChrome.setEnabledSystemUIOverlays([]);
     }
   }
