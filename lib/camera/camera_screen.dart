@@ -351,8 +351,7 @@ class _CameraScreenState extends State<CameraScreen> {
                     children: [
                       StreamBuilder<int>(
                         stream: _stopWatchTimer.rawTime,
-                        initialData:
-                        _stopWatchTimer.rawTime.valueWrapper?.value,
+                        initialData:0,
                         builder: (context, snap) {
                           final value = snap.data;
                           final displayTime = StopWatchTimer.getDisplayTime(
