@@ -15,7 +15,7 @@ import 'package:video_player/video_player.dart';
 import 'dart:math' as math;
 import 'package:flutter/scheduler.dart';
 import 'camera/widget/video_player_both_widget.dart';
-
+import 'camera/model/camera_model.dart';
 
 import 'camera/widget/advanced_overlay_widget.dart';
 part 'camera/camera_screen.dart';

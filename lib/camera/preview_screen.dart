@@ -5,13 +5,13 @@ class PreviewScreen extends StatefulWidget {
   final bool compress;
   final bool saveMedia;
   final bool ghiChu;
-  final ValueChanged<File> fileImage;
-  final ValueChanged<String>? ghiChuText;
+  final ValueChanged<CameraModel> fileImage;
+  // final ValueChanged<String>? ghiChuText;
 
   PreviewScreen(
       {required this.fileImage,
       required this.imgPath,
-      this.ghiChuText,
+      // this.ghiChuText,
       this.ghiChu = false,
       this.compress = false,
       this.saveMedia = false});
@@ -143,10 +143,16 @@ class _PreviewScreenState extends State<PreviewScreen> {
                 child: GestureDetector(
                   onTap: () {
                     if (cropped != null) {
-                      widget.fileImage(File(cropped!.path));
-                      if(widget.ghiChu == true){
-                        widget.ghiChuText!(_textEditingControllerGhiChu.text);
-                      }
+                      widget.fileImage(
+                        CameraModel(
+                          file: File(cropped!.path),
+                          caption: (widget.ghiChu == true)?_textEditingControllerGhiChu.text:''
+
+                      ));
+                      // widget.fileImage(File(cropped!.path));
+                      // if(widget.ghiChu == true){
+                      //   widget.ghiChuText!(_textEditingControllerGhiChu.text);
+                      // }
                       if (widget.saveMedia == true) {
                         GallerySaver.saveImage(cropped!.path,
                                 albumName: albumName)
@@ -156,10 +162,16 @@ class _PreviewScreenState extends State<PreviewScreen> {
                       }
                       Get.back(result: 1);
                     } else {
-                      widget.fileImage(File(widget.imgPath));
-                      if(widget.ghiChu == true){
-                        widget.ghiChuText!(_textEditingControllerGhiChu.text);
-                      }
+                      widget.fileImage(
+                          CameraModel(
+                              file: File(widget.imgPath),
+                              caption: (widget.ghiChu == true)?_textEditingControllerGhiChu.text:''
+
+                          ));
+                      // widget.fileImage(File(widget.imgPath));
+                      // if(widget.ghiChu == true){
+                      //   widget.ghiChuText!(_textEditingControllerGhiChu.text);
+                      // }
                       if (widget.saveMedia == true) {
                         GallerySaver.saveImage(widget.imgPath,
                                 albumName: albumName)

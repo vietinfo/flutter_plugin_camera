@@ -4,6 +4,8 @@
  *
 */
 part of flutter_plugin_camera;
+
+
 class CameraScreen extends StatefulWidget {
 
   /// Set time quay video theo giây, mặc định timeOutVideoCamera = 30 phút .
@@ -20,7 +22,7 @@ class CameraScreen extends StatefulWidget {
 
   /// Kết quả trả về dạng file.
   /// vd: onResutl: (value){print(value);},
-  final ValueChanged<File> onResutl;
+  final ValueChanged<CameraModel> onResutl;
 
   /// Tắt quay video, nếu disableVideoRecord = true sẽ tắt chế độ quay video.
   final disableVideoRecord;
@@ -33,7 +35,7 @@ class CameraScreen extends StatefulWidget {
 
   /// Kết quả trả về dạng String.
   /// vd: ghiChuResult: (value){print(value);},
-  final ValueChanged<String>? caption;
+  // final ValueChanged<String>? caption;
 
 
 
@@ -47,7 +49,7 @@ class CameraScreen extends StatefulWidget {
     this.disableVideoRecord = false,
     this.speciesCamera = 0,
     this.ghiChu = false,
-    this.caption
+    // this.caption
   });
 
   @override
@@ -542,7 +544,7 @@ class _CameraScreenState extends State<CameraScreen> {
             imgPath: file.path,
 
             saveMedia: widget.saveMedia,
-            ghiChuText: widget.caption,
+            // ghiChuText: widget.caption,
             ghiChu: widget.ghiChu,
 
           ));
@@ -681,7 +683,7 @@ class _CameraScreenState extends State<CameraScreen> {
           fileVideo: widget.onResutl,
           videoPath: file.path,
           saveMedia: widget.saveMedia,
-          ghiChuText: widget.caption,
+          // ghiChuText: widget.caption,
           ghiChu: widget.ghiChu,
         ));
         if (result != null) {

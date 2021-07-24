@@ -42,10 +42,8 @@ class MyApp extends StatelessWidget {
             timeOutVideoCamera: 5,
             ghiChu: true,
             onResutl: (value){
-              print(value);
-            },
-            caption: (value){
-              print('ghi chu: $value');
+              print('file ne: ${value.file}');
+              print('caption ne: ${value.caption}');
             },
           ));
         },

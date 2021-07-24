@@ -5,13 +5,13 @@ class PreviewVideo extends StatefulWidget {
   final bool compress;
   final bool saveMedia;
   final bool ghiChu;
-  final ValueChanged<File> fileVideo;
-  final ValueChanged<String>? ghiChuText;
+  final ValueChanged<CameraModel> fileVideo;
+  // final ValueChanged<String>? ghiChuText;
 
   PreviewVideo(
       {required this.fileVideo,
       required this.videoPath,
-      this.ghiChuText,
+      // this.ghiChuText,
       this.ghiChu = false,
       this.compress = false,
       this.saveMedia = false});
@@ -42,10 +42,16 @@ class _PreviewVideoState extends State<PreviewVideo> {
   }
 
   Future video() async {
-    widget.fileVideo(File(widget.videoPath));
-    if (widget.ghiChu == true) {
-      widget.ghiChuText!(_textEditingControllerGhiChu.text);
-    }
+    widget.fileVideo(
+        CameraModel(
+            file: File(widget.videoPath),
+            caption: (widget.ghiChu == true)?_textEditingControllerGhiChu.text:''
+
+        ));
+    // widget.fileVideo(File(widget.videoPath));
+    // if (widget.ghiChu == true) {
+    //   widget.ghiChuText!(_textEditingControllerGhiChu.text);
+    // }
     if (widget.saveMedia == true) {
       GallerySaver.saveVideo(widget.videoPath, albumName: albumName)
           .then((bool? success) {
