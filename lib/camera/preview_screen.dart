@@ -4,13 +4,17 @@ class PreviewScreen extends StatefulWidget {
   late final String imgPath;
   final bool compress;
   final bool saveMedia;
+  final bool ghiChu;
   final ValueChanged<File> fileImage;
+  final ValueChanged<String>? ghiChuText;
 
   PreviewScreen(
       {required this.fileImage,
-        required this.imgPath,
-        this.compress = false,
-        this.saveMedia = false});
+      required this.imgPath,
+      this.ghiChuText,
+      this.ghiChu = false,
+      this.compress = false,
+      this.saveMedia = false});
 
   @override
   _PreviewScreenState createState() => _PreviewScreenState();
@@ -20,6 +24,8 @@ class _PreviewScreenState extends State<PreviewScreen> {
   File? cropped;
   bool check = false;
   String albumName = 'Media';
+  final TextEditingController _textEditingControllerGhiChu =
+      TextEditingController();
 
   @override
   void initState() {
@@ -30,6 +36,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
     // }
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,25 +46,25 @@ class _PreviewScreenState extends State<PreviewScreen> {
           children: <Widget>[
             (cropped == null)
                 ? Center(
-                child: PhotoView(
-                  enableRotation: true,
-                  imageProvider: FileImage(File(widget.imgPath)),
-                )
-              // Image.file(
-              //   File(widget.imgPath),
-              //   fit: BoxFit.cover,
-              // ),
-            )
+                    child: PhotoView(
+                    enableRotation: true,
+                    imageProvider: FileImage(File(widget.imgPath)),
+                  )
+                    // Image.file(
+                    //   File(widget.imgPath),
+                    //   fit: BoxFit.cover,
+                    // ),
+                    )
                 : Positioned(
-              top: 150,
-              bottom: 150,
-              child: Image.file(
-                File(cropped!.path),
-                width: 500,
-                height: 500,
-                fit: BoxFit.cover,
-              ),
-            ),
+                    top: 150,
+                    bottom: 150,
+                    child: Image.file(
+                      File(cropped!.path),
+                      width: 500,
+                      height: 500,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
             Positioned(
               top: 0,
               child: Container(
@@ -101,39 +108,48 @@ class _PreviewScreenState extends State<PreviewScreen> {
             ),
             Positioned(
               bottom: 0,
-
               child: Container(
-                height: 50,
+                height: (_keyboardIsVisible()) ? 50 : 80,
                 width: MediaQuery.of(context).size.width,
                 color: Colors.black12.withOpacity(0.5),
-                child: Row(
+                child: Column(
                   children: [
-                    SizedBox(
-                      width: 10,
-                    ),
-                    // GestureDetector(
-                    //     onTap: () {
-                    //       setState(() {
-                    //         check = !check;
-                    //       });
-                    //     },
-                    //     child: Icon(
-                    //       Icons.filter,
-                    //       color: Colors.white,
-                    //     )),
+                    (widget.ghiChu)?Expanded(
+                      child: TextField(
+                        decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: 'Nhập ghi chú',
+                            hintStyle: TextStyle(color: Colors.white),
+                            icon: Icon(
+                              Icons.keyboard,
+                              color: Colors.white,
+                            )),
+                        style: TextStyle(color: Colors.white),
+                        keyboardType: TextInputType.multiline,
+                        controller: _textEditingControllerGhiChu,
+                        textCapitalization: TextCapitalization.sentences,
+                      ),
+                    ):const SizedBox.shrink(),
+                    const SizedBox(
+                      height: 10,
+                    )
                   ],
                 ),
               ),
             ),
             Positioned(
-                bottom: 25,
+                bottom: (_keyboardIsVisible()) ? 25 : 50,
                 right: 15,
                 child: GestureDetector(
                   onTap: () {
                     if (cropped != null) {
                       widget.fileImage(File(cropped!.path));
-                      if(widget.saveMedia == true){
-                        GallerySaver.saveImage(cropped!.path, albumName: albumName)
+                      if(widget.ghiChu == true){
+                        widget.ghiChuText!(_textEditingControllerGhiChu.text);
+                      }
+                      if (widget.saveMedia == true) {
+                        GallerySaver.saveImage(cropped!.path,
+                                albumName: albumName)
                             .then((bool? success) {
                           print('Luu thanh cong');
                         });
@@ -141,8 +157,12 @@ class _PreviewScreenState extends State<PreviewScreen> {
                       Get.back(result: 1);
                     } else {
                       widget.fileImage(File(widget.imgPath));
-                      if(widget.saveMedia == true){
-                        GallerySaver.saveImage(widget.imgPath, albumName: albumName)
+                      if(widget.ghiChu == true){
+                        widget.ghiChuText!(_textEditingControllerGhiChu.text);
+                      }
+                      if (widget.saveMedia == true) {
+                        GallerySaver.saveImage(widget.imgPath,
+                                albumName: albumName)
                             .then((bool? success) {
                           print('Luu thanh cong');
                         });
@@ -156,8 +176,8 @@ class _PreviewScreenState extends State<PreviewScreen> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.all(Radius.circular(
-                          50.0) //                 <--- border radius here
-                      ),
+                              50.0) //                 <--- border radius here
+                          ),
                     ), //             <--- BoxDecoration here
                     child: Center(
                       child: Icon(
@@ -194,17 +214,28 @@ class _PreviewScreenState extends State<PreviewScreen> {
     });
   }
 
-  // void compressImage(String patch) async {
-  //   final filePath = patch;
-  //   final lastIndex = filePath.lastIndexOf(new RegExp(r'.jp'));
-  //   final splitted = filePath.substring(0, (lastIndex));
-  //   final outPath = "${splitted}_out${filePath.substring(lastIndex)}";
-  //
-  //   final compressedImage = await FlutterImageCompress.compressAndGetFile(
-  //       filePath, outPath,
-  //       minWidth: 1000, minHeight: 1000, quality: 20);
-  //   this.setState(() {
-  //     widget.imgPath = compressedImage!.absolute.path;
-  //   });
-  // }
+  bool _keyboardIsVisible() {
+    return !(MediaQuery.of(context).viewInsets.bottom == 0.0);
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _textEditingControllerGhiChu.dispose();
+  }
+
+// void compressImage(String patch) async {
+//   final filePath = patch;
+//   final lastIndex = filePath.lastIndexOf(new RegExp(r'.jp'));
+//   final splitted = filePath.substring(0, (lastIndex));
+//   final outPath = "${splitted}_out${filePath.substring(lastIndex)}";
+//
+//   final compressedImage = await FlutterImageCompress.compressAndGetFile(
+//       filePath, outPath,
+//       minWidth: 1000, minHeight: 1000, quality: 20);
+//   this.setState(() {
+//     widget.imgPath = compressedImage!.absolute.path;
+//   });
+// }
 }

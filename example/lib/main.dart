@@ -35,13 +35,17 @@ class MyApp extends StatelessWidget {
       home: GestureDetector(
         onTap: (){
           Get.to(() => CameraScreen(
-            saveMedia: true,
+            saveMedia: false,
             // compressVideo: true,
             // compressImage: true,
             speciesCamera: 1,
             timeOutVideoCamera: 5,
+            ghiChu: true,
             onResutl: (value){
               print(value);
+            },
+            caption: (value){
+              print('ghi chu: $value');
             },
           ));
         },

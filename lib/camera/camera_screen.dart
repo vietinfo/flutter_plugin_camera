@@ -28,14 +28,26 @@ class CameraScreen extends StatefulWidget {
   /// Chỉnh cam mặc định 0: cam sau, 1: cam trước
   final int speciesCamera;
 
+  /// Thêm ghi chú ảnh hoặc video, mặc định ghiChu = false => không được ghi chú
+  final bool ghiChu;
+
+  /// Kết quả trả về dạng String.
+  /// vd: ghiChuResult: (value){print(value);},
+  final ValueChanged<String>? caption;
+
+
+
   CameraScreen({
     this.timeOutVideoCamera = 0,
     // this.compressVideo = false,
     // this.compressImage = false,
     required this.onResutl,
+
     this.saveMedia = false,
     this.disableVideoRecord = false,
     this.speciesCamera = 0,
+    this.ghiChu = false,
+    this.caption
   });
 
   @override
@@ -530,6 +542,9 @@ class _CameraScreenState extends State<CameraScreen> {
             imgPath: file.path,
 
             saveMedia: widget.saveMedia,
+            ghiChuText: widget.caption,
+            ghiChu: widget.ghiChu,
+
           ));
           if (result != null) {
             Get.back();
@@ -665,8 +680,9 @@ class _CameraScreenState extends State<CameraScreen> {
         result = await Get.to(() => PreviewVideo(
           fileVideo: widget.onResutl,
           videoPath: file.path,
-
           saveMedia: widget.saveMedia,
+          ghiChuText: widget.caption,
+          ghiChu: widget.ghiChu,
         ));
         if (result != null) {
           Get.back();
