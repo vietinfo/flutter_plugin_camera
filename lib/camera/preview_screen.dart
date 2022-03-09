@@ -36,7 +36,6 @@ class _PreviewScreenState extends State<PreviewScreen> {
     // }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -114,22 +113,24 @@ class _PreviewScreenState extends State<PreviewScreen> {
                 color: Colors.black12.withOpacity(0.5),
                 child: Column(
                   children: [
-                    (widget.ghiChu)?Expanded(
-                      child: TextField(
-                        decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: 'Nhập ghi chú',
-                            hintStyle: TextStyle(color: Colors.white),
-                            icon: Icon(
-                              Icons.keyboard,
-                              color: Colors.white,
-                            )),
-                        style: TextStyle(color: Colors.white),
-                        keyboardType: TextInputType.multiline,
-                        controller: _textEditingControllerGhiChu,
-                        textCapitalization: TextCapitalization.sentences,
-                      ),
-                    ):const SizedBox.shrink(),
+                    (widget.ghiChu)
+                        ? Expanded(
+                            child: TextField(
+                              decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: 'Nhập ghi chú',
+                                  hintStyle: TextStyle(color: Colors.white),
+                                  icon: Icon(
+                                    Icons.keyboard,
+                                    color: Colors.white,
+                                  )),
+                              style: TextStyle(color: Colors.white),
+                              keyboardType: TextInputType.multiline,
+                              controller: _textEditingControllerGhiChu,
+                              textCapitalization: TextCapitalization.sentences,
+                            ),
+                          )
+                        : const SizedBox.shrink(),
                     const SizedBox(
                       height: 10,
                     )
@@ -143,12 +144,11 @@ class _PreviewScreenState extends State<PreviewScreen> {
                 child: GestureDetector(
                   onTap: () {
                     if (cropped != null) {
-                      widget.fileImage(
-                        CameraModel(
+                      widget.fileImage(CameraModel(
                           file: File(cropped!.path),
-                          caption: (widget.ghiChu == true)?_textEditingControllerGhiChu.text:''
-
-                      ));
+                          caption: (widget.ghiChu == true)
+                              ? _textEditingControllerGhiChu.text
+                              : ''));
                       // widget.fileImage(File(cropped!.path));
                       // if(widget.ghiChu == true){
                       //   widget.ghiChuText!(_textEditingControllerGhiChu.text);
@@ -162,12 +162,11 @@ class _PreviewScreenState extends State<PreviewScreen> {
                       }
                       Get.back(result: 1);
                     } else {
-                      widget.fileImage(
-                          CameraModel(
-                              file: File(widget.imgPath),
-                              caption: (widget.ghiChu == true)?_textEditingControllerGhiChu.text:''
-
-                          ));
+                      widget.fileImage(CameraModel(
+                          file: File(widget.imgPath),
+                          caption: (widget.ghiChu == true)
+                              ? _textEditingControllerGhiChu.text
+                              : ''));
                       // widget.fileImage(File(widget.imgPath));
                       // if(widget.ghiChu == true){
                       //   widget.ghiChuText!(_textEditingControllerGhiChu.text);
@@ -207,7 +206,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
   }
 
   Future cropImage(String patch) async {
-    cropped = await ImageCropper.cropImage(
+    cropped = await ImageCropper().cropImage(
         sourcePath: patch,
         aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
         compressQuality: 100,

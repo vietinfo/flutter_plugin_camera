@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
 
-import 'package:flutter/services.dart';
 import 'package:flutter_plugin_camera/flutter_plugin_camera.dart';
 import 'package:get/get.dart';
-import 'package:get/get_navigation/src/root/get_material_app.dart';
 
 void main() {
   runApp(MyApp());
@@ -33,21 +30,22 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: GestureDetector(
-        onTap: (){
+        onTap: () {
           Get.to(() => CameraScreen(
-            saveMedia: false,
-            // compressVideo: true,
-            // compressImage: true,
-            speciesCamera: 1,
-            timeOutVideoCamera: 5,
-            ghiChu: true,
-            onResutl: (value){
-              print('file ne: ${value.file}');
-              print('caption ne: ${value.caption}');
-            },
-          ));
+                saveMedia: false,
+                // compressVideo: true,
+                // compressImage: true,
+                speciesCamera: 1,
+                timeOutVideoCamera: 5,
+                ghiChu: true,
+                onResutl: (value) {
+                  print('file ne: ${value.file}');
+                  print('caption ne: ${value.caption}');
+                },
+              ));
         },
-        child: Text('ABC'),),
+        child: Text('ABC'),
+      ),
     );
   }
 }
