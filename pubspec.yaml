@@ -12,7 +12,11 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.3
-  camera: ^0.8.1
+  camera:
+    git:
+      url: https://git.vietinfo.tech:8443/locnmt/plugin_camera_fix_sdk31.git
+      ref: master
+      path: camera
   video_player: ^2.1.1
   image_cropper: 1.4.0
   get: ^4.1.4
